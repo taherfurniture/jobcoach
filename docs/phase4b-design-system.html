@@ -1,0 +1,433 @@
+<title>AI Job Coach — Design System (Direction B)</title>
+<style>
+  :root{
+    --bg:#FAF8F4; --surface:#FFFFFF; --surface-2:#F1EDE6; --border:#E4DFD5;
+    --ink:#1A1815; --ink-soft:#5C5750; --ink-faint:#8C877E;
+    --accent:#D14A1F; --accent-contrast:#FFFBF7; --accent-soft:#F3E1D9;
+    --success:#2E7D4F; --success-soft:#E1F0E6;
+    --warning:#96692A; --warning-soft:#F3E7D2;
+    --danger:#B23A2E; --danger-soft:#F5E2DF;
+    --neutral-chip:#6B665C; --neutral-chip-soft:#ECEAE4;
+    --font-display:'Iowan Old Style',Georgia,'Times New Roman',ui-serif,serif;
+    --font-body:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+    --font-mono:ui-monospace,'Cascadia Code','SF Mono',Consolas,monospace;
+  }
+  @media (prefers-color-scheme:dark){
+    :root{ --bg:#111011; --surface:#1B1917; --surface-2:#252220; --border:#322E2A; --ink:#EFEBE4; --ink-soft:#B8B2A9; --ink-faint:#847E74; --accent:#FF6F3A; --accent-contrast:#1A0D06; --accent-soft:#3A2318; --success:#4ADE80; --success-soft:#173324; --warning:#D9A94F; --warning-soft:#332A16; --danger:#E8746A; --danger-soft:#3A2320; --neutral-chip:#B8B2A9; --neutral-chip-soft:#252220; }
+  }
+  :root[data-theme="dark"]{ --bg:#111011; --surface:#1B1917; --surface-2:#252220; --border:#322E2A; --ink:#EFEBE4; --ink-soft:#B8B2A9; --ink-faint:#847E74; --accent:#FF6F3A; --accent-contrast:#1A0D06; --accent-soft:#3A2318; --success:#4ADE80; --success-soft:#173324; --warning:#D9A94F; --warning-soft:#332A16; --danger:#E8746A; --danger-soft:#3A2320; --neutral-chip:#B8B2A9; --neutral-chip-soft:#252220; }
+  :root[data-theme="light"]{ --bg:#FAF8F4; --surface:#FFFFFF; --surface-2:#F1EDE6; --border:#E4DFD5; --ink:#1A1815; --ink-soft:#5C5750; --ink-faint:#8C877E; --accent:#D14A1F; --accent-contrast:#FFFBF7; --accent-soft:#F3E1D9; --success:#2E7D4F; --success-soft:#E1F0E6; --warning:#96692A; --warning-soft:#F3E7D2; --danger:#B23A2E; --danger-soft:#F5E2DF; --neutral-chip:#6B665C; --neutral-chip-soft:#ECEAE4; }
+
+  *{box-sizing:border-box;}
+  body{margin:0; background:var(--bg); color:var(--ink); font-family:var(--font-body); line-height:1.55; -webkit-font-smoothing:antialiased;}
+  h1,h2,h3,h4{font-family:var(--font-display); text-wrap:balance; font-weight:600; color:var(--ink);}
+  a{color:var(--accent);}
+  .layout{display:grid; grid-template-columns:250px minmax(0,1fr); gap:0; max-width:1360px; margin:0 auto;}
+  @media (max-width:920px){ .layout{grid-template-columns:1fr;} }
+  nav.toc{position:sticky; top:0; align-self:start; height:100vh; overflow-y:auto; padding:26px 16px 40px 26px; border-right:1px solid var(--border); font-size:13px;}
+  @media (max-width:920px){ nav.toc{position:relative; height:auto; border-right:none; border-bottom:1px solid var(--border); padding:20px 20px 8px;} }
+  nav.toc .eyebrow{font-family:var(--font-mono); letter-spacing:.08em; text-transform:uppercase; color:var(--ink-faint); font-size:11px; margin-bottom:12px;}
+  nav.toc ol{list-style:none; margin:0 0 16px; padding:0;}
+  nav.toc .part-title{font-family:var(--font-mono); text-transform:uppercase; letter-spacing:.06em; font-size:10.5px; color:var(--accent); margin:16px 0 5px;}
+  nav.toc .part-title:first-child{margin-top:0;}
+  nav.toc li a{display:block; padding:2.5px 0; color:var(--ink-soft); text-decoration:none;}
+  nav.toc li a:hover{color:var(--accent);}
+  main{padding:40px clamp(18px,4vw,56px) 100px;}
+  header.hero{max-width:80ch; margin-bottom:34px;}
+  .eyebrow{font-family:var(--font-mono); letter-spacing:.08em; text-transform:uppercase; color:var(--accent); font-size:12px; margin-bottom:10px;}
+  h1.title{font-size:clamp(26px,4vw,36px); margin:0 0 12px; line-height:1.15;}
+  .subtitle{color:var(--ink-soft); font-size:16px; max-width:66ch; margin:0 0 14px;}
+  .meta{display:flex; gap:16px; flex-wrap:wrap; font-family:var(--font-mono); font-size:12px; color:var(--ink-faint); border-top:1px solid var(--border); padding-top:12px;}
+  .meta b{color:var(--ink-soft);}
+  .toggle-note{background:var(--accent-soft); border:1px solid color-mix(in srgb, var(--accent) 30%, transparent); border-radius:8px; padding:12px 16px; font-size:13.5px; color:var(--ink-soft); max-width:66ch; margin:16px 0 0;}
+
+  section.part{padding-top:48px; margin-top:-14px; border-top:1px solid var(--border);}
+  section.part:first-of-type{border-top:none;}
+  .part-eyebrow{font-family:var(--font-mono); text-transform:uppercase; letter-spacing:.08em; font-size:11.5px; color:var(--accent); margin-bottom:6px;}
+  .part-heading{font-size:24px; margin:0 0 24px;}
+  .sub-heading{font-size:16px; margin:32px 0 12px; font-family:var(--font-body); font-weight:600; color:var(--ink);}
+  .sub-heading:first-of-type{margin-top:0;}
+
+  .table-wrap{overflow-x:auto; margin:10px 0 26px; border:1px solid var(--border); border-radius:8px;}
+  table{border-collapse:collapse; width:100%; min-width:560px; font-size:13.5px; background:var(--surface);}
+  th,td{text-align:left; padding:9px 13px; border-bottom:1px solid var(--border); vertical-align:middle;}
+  th{font-family:var(--font-mono); font-size:10.5px; text-transform:uppercase; letter-spacing:.05em; color:var(--ink-faint); background:var(--surface-2);}
+  tr:last-child td{border-bottom:none;}
+  .sw{display:inline-block; width:20px; height:20px; border-radius:5px; vertical-align:-5px; margin-right:8px; border:1px solid rgba(128,128,128,.25);}
+
+  /* Specimen containers */
+  .specimen{background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:22px 24px; margin:0 0 24px;}
+  .specimen-row{display:flex; gap:14px; flex-wrap:wrap; align-items:center;}
+  .cap{font-family:var(--font-mono); font-size:10.5px; text-transform:uppercase; letter-spacing:.05em; color:var(--ink-faint); margin-bottom:10px; display:block;}
+
+  /* Type scale */
+  .type-row{display:flex; align-items:baseline; gap:18px; padding:10px 0; border-bottom:1px solid var(--border);}
+  .type-row:last-child{border-bottom:none;}
+  .type-row .t-label{font-family:var(--font-mono); font-size:11px; color:var(--ink-faint); width:120px; flex-shrink:0;}
+  .t-display-xl{font-family:var(--font-display); font-size:38px;}
+  .t-display-l{font-family:var(--font-display); font-size:29px;}
+  .t-h1{font-size:23px; font-weight:700;}
+  .t-h2{font-size:18px; font-weight:700;}
+  .t-body-l{font-size:16px;}
+  .t-body{font-size:14.5px; color:var(--ink-soft);}
+  .t-mono{font-family:var(--font-mono); font-size:12.5px; color:var(--accent);}
+
+  /* Spacing scale */
+  .space-row{display:flex; align-items:center; gap:14px; padding:6px 0;}
+  .space-bar{background:var(--accent); height:10px; border-radius:3px;}
+  .space-label{font-family:var(--font-mono); font-size:11px; color:var(--ink-faint); width:70px;}
+
+  /* Buttons */
+  .btn{font-family:var(--font-body); font-size:13.5px; font-weight:600; padding:10px 18px; border-radius:8px; border:none; cursor:pointer; display:inline-flex; align-items:center; gap:6px;}
+  .btn-primary{background:var(--accent); color:var(--accent-contrast);}
+  .btn-secondary{background:transparent; color:var(--ink); border:1.5px solid var(--border);}
+  .btn-text{background:transparent; color:var(--accent); padding-left:2px; padding-right:2px;}
+  .btn-danger{background:var(--danger); color:var(--accent-contrast);}
+  .btn[disabled]{opacity:.4; cursor:not-allowed;}
+  .btn:focus-visible{outline:2px solid var(--accent); outline-offset:2px;}
+
+  /* Forms */
+  .field{margin-bottom:14px; max-width:340px;}
+  .field label{display:block; font-size:12.5px; font-weight:600; margin-bottom:5px; color:var(--ink);}
+  .field input, .field select, .field textarea{width:100%; font-family:var(--font-body); font-size:14px; padding:9px 11px; border-radius:7px; border:1.5px solid var(--border); background:var(--surface); color:var(--ink);}
+  .field input:focus, .field select:focus, .field textarea:focus{outline:none; border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-soft);}
+  .field.error input{border-color:var(--danger);}
+  .field .hint{font-size:11.5px; color:var(--ink-faint); margin-top:4px;}
+  .field.error .hint{color:var(--danger);}
+  .toggle-switch{display:inline-flex; align-items:center; gap:10px; font-size:13.5px;}
+  .toggle-track{width:38px; height:22px; border-radius:20px; background:var(--border); position:relative; flex-shrink:0;}
+  .toggle-track.on{background:var(--accent);}
+  .toggle-thumb{position:absolute; top:2px; left:2px; width:18px; height:18px; border-radius:50%; background:var(--surface);}
+  .toggle-track.on .toggle-thumb{left:18px;}
+
+  /* Cards & chips */
+  .card{background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:16px 18px;}
+  .chip{display:inline-flex; align-items:center; gap:5px; font-family:var(--font-mono); font-size:10.5px; padding:3px 10px; border-radius:20px; font-weight:600;}
+  .chip-confirmed{background:var(--success-soft); color:var(--success);}
+  .chip-inferred{background:var(--warning-soft); color:var(--warning);}
+  .chip-missing{background:var(--neutral-chip-soft); color:var(--neutral-chip);}
+  .chip-verify{background:var(--danger-soft); color:var(--danger);}
+
+  /* Job card */
+  .job-card{background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:18px 20px; max-width:420px;}
+  .job-card .jc-top{display:flex; justify-content:space-between; align-items:flex-start; gap:10px;}
+  .job-card h5{margin:0 0 3px; font-size:15.5px; font-family:var(--font-body); font-weight:700;}
+  .job-card .jc-sub{font-size:12.5px; color:var(--ink-faint); margin-bottom:10px;}
+  .job-card .jc-reason{font-size:13px; color:var(--ink-soft); margin:10px 0 12px; padding:10px 12px; background:var(--surface-2); border-radius:8px;}
+  .job-card .jc-actions{display:flex; gap:8px;}
+
+  /* Match score */
+  .match-score{display:inline-flex; align-items:center; gap:10px;}
+  .ms-ring{width:46px; height:46px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-family:var(--font-mono); font-size:12px; font-weight:700; flex-shrink:0;
+    background:conic-gradient(var(--accent) calc(var(--pct,88)*1%), var(--surface-2) 0);}
+  .ms-ring::before{content:attr(data-pct)"%"; background:var(--surface); width:34px; height:34px; border-radius:50%; display:flex; align-items:center; justify-content:center; color:var(--ink);}
+
+  /* Coach chat */
+  .chat-panel{background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:18px 20px; max-width:460px;}
+  .bubble{border-radius:12px; padding:12px 14px; font-size:13.5px; line-height:1.5; margin-bottom:12px; max-width:88%;}
+  .bubble.coach{background:var(--surface-2); color:var(--ink-soft); border-top-left-radius:3px;}
+  .bubble.user{background:var(--accent); color:var(--accent-contrast); margin-left:auto; border-top-right-radius:3px;}
+  .bubble .who{font-family:var(--font-mono); font-size:9.5px; text-transform:uppercase; opacity:.65; display:block; margin-bottom:5px;}
+  .thinking{display:inline-flex; gap:4px; align-items:center; padding:10px 14px; background:var(--surface-2); border-radius:12px; border-top-left-radius:3px;}
+  .thinking span{width:6px; height:6px; border-radius:50%; background:var(--accent); animation:think 1.1s ease-in-out infinite;}
+  .thinking span:nth-child(2){animation-delay:.15s;}
+  .thinking span:nth-child(3){animation-delay:.3s;}
+  @keyframes think{0%,60%,100%{transform:translateY(0); opacity:.4;} 30%{transform:translateY(-4px); opacity:1;}}
+  @media (prefers-reduced-motion:reduce){ .thinking span{animation:none; opacity:.8;} }
+
+  /* Profile completion */
+  .ring-lg{width:88px; height:88px; border-radius:50%; display:flex; align-items:center; justify-content:center; background:conic-gradient(var(--accent) calc(var(--pct,72)*1%), var(--surface-2) 0);}
+  .ring-lg::before{content:attr(data-pct)"%"; width:68px; height:68px; border-radius:50%; background:var(--surface); display:flex; align-items:center; justify-content:center; font-family:var(--font-mono); font-size:16px; font-weight:700;}
+
+  /* Nav mockups */
+  .nav-sidebar{width:180px; background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:14px 10px; display:flex; flex-direction:column; gap:2px;}
+  .nav-item{padding:9px 12px; border-radius:7px; font-size:13px; color:var(--ink-soft);}
+  .nav-item.active{background:var(--accent-soft); color:var(--accent); font-weight:600;}
+  .nav-tabbar{display:flex; justify-content:space-around; background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:10px 6px; max-width:340px;}
+  .nav-tabbar .tab{font-size:10px; color:var(--ink-faint); text-align:center; font-family:var(--font-mono);}
+  .nav-tabbar .tab.active{color:var(--accent);}
+  .tab-dot{width:6px; height:6px; border-radius:50%; background:currentColor; margin:0 auto 5px;}
+
+  /* Modal */
+  .modal-demo{background:rgba(0,0,0,.45); border-radius:10px; padding:36px 20px; display:flex; justify-content:center;}
+  .modal-box{background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:22px 24px; max-width:340px; width:100%;}
+  .modal-box h4{margin:0 0 8px; font-size:16px;}
+  .modal-box p{font-size:13.5px; color:var(--ink-soft); margin:0 0 16px;}
+
+  /* Toast */
+  .toast{display:inline-flex; align-items:center; gap:10px; padding:11px 16px; border-radius:9px; font-size:13.5px; max-width:340px;}
+  .toast-success{background:var(--success-soft); color:var(--success);}
+  .toast-error{background:var(--danger-soft); color:var(--danger);}
+
+  /* Skeleton */
+  .skeleton{background:linear-gradient(90deg, var(--surface-2) 25%, var(--border) 37%, var(--surface-2) 63%); background-size:400% 100%; border-radius:6px; animation:shimmer 1.6s ease infinite;}
+  @keyframes shimmer{0%{background-position:100% 0;} 100%{background-position:-100% 0;}}
+  @media (prefers-reduced-motion:reduce){ .skeleton{animation:none; background:var(--surface-2);} }
+
+  .empty-state{text-align:center; padding:36px 20px; color:var(--ink-faint); background:var(--surface); border:1px dashed var(--border); border-radius:10px; max-width:340px;}
+  .empty-state .es-icon{font-size:26px; margin-bottom:10px; opacity:.5;}
+
+  .focus-demo{display:flex; gap:14px; flex-wrap:wrap;}
+  .focus-demo .btn{outline:2px solid var(--accent); outline-offset:3px;}
+
+  .grid-3{display:grid; grid-template-columns:repeat(3,1fr); gap:16px;}
+  @media (max-width:760px){ .grid-3{grid-template-columns:1fr;} }
+  .grid-2{display:grid; grid-template-columns:1fr 1fr; gap:16px;}
+  @media (max-width:700px){ .grid-2{grid-template-columns:1fr;} }
+
+  footer.doc-footer{max-width:78ch; margin-top:56px; padding-top:22px; border-top:1px solid var(--border); color:var(--ink-faint); font-size:13.5px;}
+</style>
+
+<div class="layout">
+  <nav class="toc">
+    <div class="eyebrow">On this page</div>
+    <ol>
+      <li class="part-title">Foundations</li>
+      <li><a href="#f-color">Color system</a></li>
+      <li><a href="#f-type">Typography</a></li>
+      <li><a href="#f-space">Spacing & grid</a></li>
+      <li class="part-title">Core components</li>
+      <li><a href="#c-buttons">Buttons</a></li>
+      <li><a href="#c-forms">Forms</a></li>
+      <li><a href="#c-cards">Cards & tables</a></li>
+      <li class="part-title">Product components</li>
+      <li><a href="#p-job">Job card & match score</a></li>
+      <li><a href="#p-course">Course card</a></li>
+      <li><a href="#p-coach">AI coach interface</a></li>
+      <li><a href="#p-profile">Profile completion</a></li>
+      <li><a href="#p-status">Status indicators</a></li>
+      <li class="part-title">Navigation & overlays</li>
+      <li><a href="#n-nav">Navigation</a></li>
+      <li><a href="#n-modal">Modals & toasts</a></li>
+      <li class="part-title">States</li>
+      <li><a href="#s-states">Empty, error, loading</a></li>
+      <li class="part-title">Mobile & access.</li>
+      <li><a href="#s-mobile">Mobile components</a></li>
+      <li><a href="#s-a11y">Accessibility states</a></li>
+    </ol>
+  </nav>
+
+  <main>
+    <header class="hero">
+      <div class="eyebrow">Job Coach — Design System</div>
+      <h1 class="title">Direction B, Realized</h1>
+      <p class="subtitle">Studio Dark as the default expression, a fully-equal light mode alongside it — same brand, same accent family, tuned per mode for contrast rather than a naive invert.</p>
+      <div class="meta">
+        <span><b>Direction</b> B — Studio Dark, with light/dark toggle</span>
+        <span><b>Status</b> Draft — awaiting your approval</span>
+        <span><b>Next</b> Phase 5 — Implementation Planning</span>
+      </div>
+      <div class="toggle-note">Toggle your viewer's light/dark theme control (not a control on this page) to see both modes render live — everything below is wired to both, not a dark screenshot with a filter.</div>
+    </header>
+
+    <!-- FOUNDATIONS -->
+    <section class="part" id="f-color">
+      <div class="part-eyebrow">Part A — Foundations</div>
+      <h2 class="part-heading">Color, type, space</h2>
+
+      <h3 class="sub-heading">Color system</h3>
+      <div class="table-wrap"><table>
+        <tr><th>Token</th><th>Light</th><th>Dark</th><th>Use</th></tr>
+        <tr><td>bg</td><td><span class="sw" style="background:#FAF8F4"></span>#FAF8F4</td><td><span class="sw" style="background:#111011"></span>#111011</td><td>Page background</td></tr>
+        <tr><td>surface</td><td><span class="sw" style="background:#FFFFFF"></span>#FFFFFF</td><td><span class="sw" style="background:#1B1917"></span>#1B1917</td><td>Cards, panels, inputs</td></tr>
+        <tr><td>surface-2</td><td><span class="sw" style="background:#F1EDE6"></span>#F1EDE6</td><td><span class="sw" style="background:#252220"></span>#252220</td><td>Nested panels, skeletons</td></tr>
+        <tr><td>border</td><td><span class="sw" style="background:#E4DFD5"></span>#E4DFD5</td><td><span class="sw" style="background:#322E2A"></span>#322E2A</td><td>Dividers, outlines</td></tr>
+        <tr><td>ink</td><td><span class="sw" style="background:#1A1815"></span>#1A1815</td><td><span class="sw" style="background:#EFEBE4"></span>#EFEBE4</td><td>Primary text</td></tr>
+        <tr><td>ink-soft</td><td><span class="sw" style="background:#5C5750"></span>#5C5750</td><td><span class="sw" style="background:#B8B2A9"></span>#B8B2A9</td><td>Secondary text</td></tr>
+        <tr><td>accent</td><td><span class="sw" style="background:#D14A1F"></span>#D14A1F</td><td><span class="sw" style="background:#FF6F3A"></span>#FF6F3A</td><td>Primary actions, citations — deepened in light mode for AA text contrast, brightened in dark mode for glow</td></tr>
+        <tr><td>success</td><td><span class="sw" style="background:#2E7D4F"></span>#2E7D4F</td><td><span class="sw" style="background:#4ADE80"></span>#4ADE80</td><td>Confirmed status only — never the brand accent</td></tr>
+        <tr><td>warning</td><td><span class="sw" style="background:#96692A"></span>#96692A</td><td><span class="sw" style="background:#D9A94F"></span>#D9A94F</td><td>Inferred / needs-review status</td></tr>
+        <tr><td>danger</td><td><span class="sw" style="background:#B23A2E"></span>#B23A2E</td><td><span class="sw" style="background:#E8746A"></span>#E8746A</td><td>Errors, destructive actions</td></tr>
+      </table></div>
+      <p style="font-size:13.5px; color:var(--ink-soft); max-width:70ch;">Semantic status colors (success/warning/danger) are intentionally separate from the brand accent — a job match score and a "profile field needs verification" warning should never fight for the same visual weight.</p>
+
+      <h3 class="sub-heading" id="f-type">Typography</h3>
+      <div class="specimen">
+        <div class="type-row"><span class="t-label">Display XL / 38</span><span class="t-display-xl">Land the right role</span></div>
+        <div class="type-row"><span class="t-label">Display L / 29</span><span class="t-display-l">Your career profile</span></div>
+        <div class="type-row"><span class="t-label">H1 / 23</span><span class="t-h1">Job matches for you</span></div>
+        <div class="type-row"><span class="t-label">H2 / 18</span><span class="t-h2">Digital Marketing Specialist</span></div>
+        <div class="type-row"><span class="t-label">Body L / 16</span><span class="t-body-l">Based on your 8 years in marketing, this role is a strong fit.</span></div>
+        <div class="type-row"><span class="t-label">Body / 14.5</span><span class="t-body">Missing only "SQL basics" — two of your saved jobs also ask for it.</span></div>
+        <div class="type-row"><span class="t-label">Mono / 12.5</span><span class="t-mono">92% match · Confirmed · 3y exp</span></div>
+      </div>
+      <p style="font-size:13px; color:var(--ink-faint); max-width:70ch;">Display uses a system editorial-serif stack for this specimen. Production should license a real display serif in this spirit (candidates: Fraunces, GT Super, Canela) — a licensing decision to make before build, not a blocker to this framework.</p>
+
+      <h3 class="sub-heading" id="f-space">Spacing & grid</h3>
+      <div class="specimen">
+        <div class="space-row"><span class="space-label">4</span><div class="space-bar" style="width:4px;"></div></div>
+        <div class="space-row"><span class="space-label">8</span><div class="space-bar" style="width:8px;"></div></div>
+        <div class="space-row"><span class="space-label">12</span><div class="space-bar" style="width:12px;"></div></div>
+        <div class="space-row"><span class="space-label">16</span><div class="space-bar" style="width:16px;"></div></div>
+        <div class="space-row"><span class="space-label">24</span><div class="space-bar" style="width:24px;"></div></div>
+        <div class="space-row"><span class="space-label">32</span><div class="space-bar" style="width:32px;"></div></div>
+        <div class="space-row"><span class="space-label">48</span><div class="space-bar" style="width:48px;"></div></div>
+        <div class="space-row"><span class="space-label">64</span><div class="space-bar" style="width:64px;"></div></div>
+      </div>
+      <div class="table-wrap"><table>
+        <tr><th>Breakpoint</th><th>Range</th><th>Layout</th></tr>
+        <tr><td>Mobile</td><td>&lt; 640px</td><td>Single column, bottom tab bar</td></tr>
+        <tr><td>Tablet</td><td>640–1024px</td><td>Single column, wider cards, sidebar collapses to icons</td></tr>
+        <tr><td>Desktop</td><td>&gt; 1024px</td><td>Sidebar nav, up to 3-column job feed, docked coach panel option</td></tr>
+      </table></div>
+    </section>
+
+    <!-- CORE COMPONENTS -->
+    <section class="part" id="c-buttons">
+      <div class="part-eyebrow">Part B — Core Components</div>
+      <h2 class="part-heading">Buttons, forms, cards, tables</h2>
+
+      <h3 class="sub-heading">Buttons</h3>
+      <div class="specimen"><div class="specimen-row">
+        <button class="btn btn-primary">Save profile</button>
+        <button class="btn btn-secondary">Cancel</button>
+        <button class="btn btn-text">Skip this step</button>
+        <button class="btn btn-danger">Delete account</button>
+        <button class="btn btn-primary" disabled>Uploading…</button>
+      </div></div>
+
+      <h3 class="sub-heading" id="c-forms">Forms</h3>
+      <div class="specimen">
+        <div class="grid-2">
+          <div>
+            <div class="field"><label>Job title</label><input type="text" value="Digital Marketing Specialist"></div>
+            <div class="field error"><label>Expected salary (AED/month)</label><input type="text" value="abc"><span class="hint">Enter a number, e.g. 12000</span></div>
+          </div>
+          <div>
+            <div class="field"><label>Work model</label><select><option>Hybrid</option></select></div>
+            <div class="toggle-switch"><div class="toggle-track on"><div class="toggle-thumb"></div></div>Use my data to match jobs</div>
+          </div>
+        </div>
+      </div>
+
+      <h3 class="sub-heading" id="c-cards">Cards & tables</h3>
+      <div class="specimen"><div class="card"><b>Generic card</b><p style="color:var(--ink-soft); font-size:13.5px; margin:6px 0 0;">The base surface every job card, course card, and profile section is built from — one radius, one border, one elevation rule.</p></div></div>
+    </section>
+
+    <!-- PRODUCT COMPONENTS -->
+    <section class="part" id="p-job">
+      <div class="part-eyebrow">Part C — Product Components</div>
+      <h2 class="part-heading">Job cards, coach, profile, status</h2>
+
+      <h3 class="sub-heading">Job card & match score</h3>
+      <div class="specimen-row">
+        <div class="job-card">
+          <div class="jc-top">
+            <div><h5>Digital Marketing Specialist</h5><div class="jc-sub">Vantage Retail Group · Dubai · Hybrid</div></div>
+            <div class="match-score"><div class="ms-ring" data-pct="88" style="--pct:88;"></div></div>
+          </div>
+          <div class="jc-reason">Strong fit on your marketing experience and confirmed skills. Missing: SQL basics.</div>
+          <div class="jc-actions"><button class="btn btn-primary">Save</button><button class="btn btn-secondary">Dismiss</button></div>
+        </div>
+      </div>
+
+      <h3 class="sub-heading" id="p-course">Course card <span class="chip chip-missing" style="margin-left:6px;">post-MVP</span></h3>
+      <div class="card" style="max-width:340px;">
+        <div style="font-size:11px; font-family:var(--font-mono); color:var(--ink-faint); margin-bottom:4px;">COURSERA</div>
+        <b>SQL for Data Analysis</b>
+        <p style="font-size:13px; color:var(--ink-soft); margin:6px 0 10px;">Addresses the one gap in your top 3 matches · ~18 hrs · Beginner</p>
+        <button class="btn btn-secondary">View course ↗</button>
+      </div>
+
+      <h3 class="sub-heading" id="p-coach">AI coach interface</h3>
+      <div class="specimen-row">
+        <div class="chat-panel">
+          <div class="bubble user"><span class="who">You</span>Should I apply to this marketing role?</div>
+          <div class="bubble coach"><span class="who">Coach</span>Yes — based on your 8 years in marketing <span class="chip chip-confirmed">confirmed</span>, this is a strong fit. One gap: SQL basics, which two other saved jobs also want.</div>
+          <div class="thinking"><span></span><span></span><span></span></div>
+        </div>
+      </div>
+      <p style="font-size:13px; color:var(--ink-faint); max-width:66ch;">The "thinking" dots are this direction's one deliberate motion moment — everywhere else stays still. Respects <code>prefers-reduced-motion</code>.</p>
+
+      <h3 class="sub-heading" id="p-profile">Profile completion</h3>
+      <div class="specimen-row" style="align-items:center; gap:20px;">
+        <div class="ring-lg" data-pct="72" style="--pct:72;"></div>
+        <div style="font-size:13.5px; color:var(--ink-soft);">Employment ✓ · Education ✓ · Skills ✓<br>Salary expectations — needs input<br>Visa status — needs input</div>
+      </div>
+
+      <h3 class="sub-heading" id="p-status">Status indicators</h3>
+      <div class="specimen-row">
+        <span class="chip chip-confirmed">Confirmed</span>
+        <span class="chip chip-inferred">AI-Inferred</span>
+        <span class="chip chip-missing">Missing</span>
+        <span class="chip chip-verify">Needs Verification</span>
+      </div>
+    </section>
+
+    <!-- NAVIGATION & OVERLAYS -->
+    <section class="part" id="n-nav">
+      <div class="part-eyebrow">Part D — Navigation & Overlays</div>
+      <h2 class="part-heading">Getting around, and interrupting politely</h2>
+
+      <h3 class="sub-heading">Navigation</h3>
+      <div class="specimen-row">
+        <div class="nav-sidebar">
+          <div class="nav-item active">Dashboard</div>
+          <div class="nav-item">Career Profile</div>
+          <div class="nav-item">Coach</div>
+          <div class="nav-item">Jobs</div>
+          <div class="nav-item">Settings</div>
+        </div>
+        <div class="nav-tabbar">
+          <div class="tab active"><div class="tab-dot"></div>Home</div>
+          <div class="tab"><div class="tab-dot"></div>Profile</div>
+          <div class="tab"><div class="tab-dot"></div>Coach</div>
+          <div class="tab"><div class="tab-dot"></div>Jobs</div>
+          <div class="tab"><div class="tab-dot"></div>Settings</div>
+        </div>
+      </div>
+
+      <h3 class="sub-heading" id="n-modal">Modals & toasts</h3>
+      <div class="specimen-row">
+        <div class="modal-demo" style="width:320px;">
+          <div class="modal-box">
+            <h4>Delete your account?</h4>
+            <p>This permanently removes your profile, documents, chat history, and job history. This can't be undone.</p>
+            <div style="display:flex; gap:8px;"><button class="btn btn-danger">Delete</button><button class="btn btn-secondary">Cancel</button></div>
+          </div>
+        </div>
+        <div style="display:flex; flex-direction:column; gap:10px;">
+          <div class="toast toast-success">✓ Profile updated</div>
+          <div class="toast toast-error">Coach temporarily unavailable — try again</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- STATES -->
+    <section class="part" id="s-states">
+      <div class="part-eyebrow">Part E — States</div>
+      <h2 class="part-heading">Empty, error, loading</h2>
+      <div class="grid-3">
+        <div class="empty-state"><div class="es-icon">◌</div>No job matches yet<br><span style="font-size:12px;">Complete your profile to see matches</span></div>
+        <div class="card" style="border-color:var(--danger);"><b style="color:var(--danger);">Couldn't read this file</b><p style="font-size:13px; color:var(--ink-soft); margin:6px 0 10px;">Try a different PDF, or enter your details manually.</p><button class="btn btn-secondary">Enter manually</button></div>
+        <div class="card">
+          <div class="skeleton" style="height:16px; width:70%; margin-bottom:8px;"></div>
+          <div class="skeleton" style="height:12px; width:45%; margin-bottom:14px;"></div>
+          <div class="skeleton" style="height:32px; width:90px;"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- MOBILE & A11Y -->
+    <section class="part" id="s-mobile">
+      <div class="part-eyebrow">Part F — Mobile & Accessibility</div>
+      <h2 class="part-heading">Small screens, and everyone</h2>
+
+      <h3 class="sub-heading">Mobile components</h3>
+      <p style="font-size:14px; color:var(--ink-soft); max-width:66ch;">Same nav-tabbar shown above is the mobile primary nav. Job cards and the chat panel both collapse to full device width with no layout change beyond that — no separate "mobile version" of any component to maintain.</p>
+
+      <h3 class="sub-heading" id="s-a11y">Accessibility states</h3>
+      <div class="specimen focus-demo">
+        <button class="btn btn-primary">Focused button</button>
+        <div class="field" style="margin:0; max-width:200px;"><input type="text" value="Focused field" style="outline:2px solid var(--accent); outline-offset:2px;"></div>
+      </div>
+      <ul style="font-size:14px; color:var(--ink-soft); max-width:70ch;">
+        <li>Accent tokens are tuned per mode specifically to clear WCAG AA text contrast — not the same hex reused with a filter</li>
+        <li>Status chips carry a text label, never color alone — verified in the specimen above</li>
+        <li>The one animation in this system (coach "thinking") degrades to a static state under <code>prefers-reduced-motion</code></li>
+      </ul>
+    </section>
+
+    <footer class="doc-footer">Design system draft for Direction B (dark-first, light as an equal mode) — awaiting your approval before Phase 5 (Implementation Planning), which turns this into a build sequence.</footer>
+  </main>
+</div>

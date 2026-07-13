@@ -1,0 +1,537 @@
+<title>AI Job Coach — Phase 3 Information Architecture & UX Framework</title>
+<style>
+  :root{
+    --bg:#F5F6F2; --surface:#FFFFFF; --surface-2:#ECEFE9; --border:#DCE0D6;
+    --ink:#16211C; --ink-soft:#4B564E; --ink-faint:#7C8880;
+    --accent:#1F6E5C; --accent-ink:#0F3F34; --accent-soft:#E4EFE9;
+    --amber:#96692A; --amber-soft:#F3E7D2;
+    --risk:#8C3A29; --risk-soft:#F3E0DB;
+    --open:#4B5768; --open-soft:#E7E9EE;
+    --wire:#B9C3B4;
+    --font-display:'Iowan Old Style','Source Serif Pro','Palatino Linotype',Georgia,ui-serif,serif;
+    --font-body:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+    --font-mono:ui-monospace,'Cascadia Code','SF Mono',Consolas,monospace;
+  }
+  @media (prefers-color-scheme:dark){
+    :root{
+      --bg:#10160F; --surface:#161F17; --surface-2:#1D2820; --border:#2A362C;
+      --ink:#E8ECE5; --ink-soft:#AEB8AC; --ink-faint:#7E8B80;
+      --accent:#57BC9F; --accent-ink:#BFEBDB; --accent-soft:#1B332A;
+      --amber:#D9A94F; --amber-soft:#332A16;
+      --risk:#DE8571; --risk-soft:#3A2620;
+      --open:#9AA6B4; --open-soft:#232C34;
+      --wire:#3A473D;
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#10160F; --surface:#161F17; --surface-2:#1D2820; --border:#2A362C;
+    --ink:#E8ECE5; --ink-soft:#AEB8AC; --ink-faint:#7E8B80;
+    --accent:#57BC9F; --accent-ink:#BFEBDB; --accent-soft:#1B332A;
+    --amber:#D9A94F; --amber-soft:#332A16;
+    --risk:#DE8571; --risk-soft:#3A2620;
+    --open:#9AA6B4; --open-soft:#232C34;
+    --wire:#3A473D;
+  }
+  :root[data-theme="light"]{
+    --bg:#F5F6F2; --surface:#FFFFFF; --surface-2:#ECEFE9; --border:#DCE0D6;
+    --ink:#16211C; --ink-soft:#4B564E; --ink-faint:#7C8880;
+    --accent:#1F6E5C; --accent-ink:#0F3F34; --accent-soft:#E4EFE9;
+    --amber:#96692A; --amber-soft:#F3E7D2;
+    --risk:#8C3A29; --risk-soft:#F3E0DB;
+    --open:#4B5768; --open-soft:#E7E9EE;
+    --wire:#B9C3B4;
+  }
+
+  *{box-sizing:border-box;}
+  body{margin:0; background:var(--bg); color:var(--ink); font-family:var(--font-body); line-height:1.55; font-size:16px; -webkit-font-smoothing:antialiased;}
+  h1,h2,h3,h4{font-family:var(--font-display); text-wrap:balance; color:var(--ink); font-weight:600;}
+  a{color:var(--accent);}
+  .layout{display:grid; grid-template-columns:260px minmax(0,1fr); gap:0; max-width:1320px; margin:0 auto;}
+  @media (max-width:920px){ .layout{grid-template-columns:1fr;} }
+
+  nav.toc{position:sticky; top:0; align-self:start; height:100vh; overflow-y:auto; padding:28px 18px 40px 28px; border-right:1px solid var(--border); font-size:13.5px;}
+  @media (max-width:920px){ nav.toc{position:relative; height:auto; border-right:none; border-bottom:1px solid var(--border); padding:20px 20px 8px;} }
+  nav.toc .eyebrow{font-family:var(--font-mono); letter-spacing:.08em; text-transform:uppercase; color:var(--ink-faint); font-size:11px; margin-bottom:14px;}
+  nav.toc ol{list-style:none; margin:0 0 18px; padding:0;}
+  nav.toc .part-title{font-family:var(--font-mono); text-transform:uppercase; letter-spacing:.06em; font-size:11px; color:var(--accent); margin:18px 0 6px;}
+  nav.toc .part-title:first-child{margin-top:0;}
+  nav.toc li a{display:block; padding:3px 0; color:var(--ink-soft); text-decoration:none;}
+  nav.toc li a:hover{color:var(--accent);}
+
+  main{padding:44px clamp(20px,4vw,64px) 100px;}
+  header.hero{max-width:80ch; margin-bottom:36px;}
+  .eyebrow{font-family:var(--font-mono); letter-spacing:.08em; text-transform:uppercase; color:var(--accent); font-size:12px; margin-bottom:10px;}
+  h1.title{font-size:clamp(28px,4vw,40px); margin:0 0 14px; line-height:1.1;}
+  .subtitle{color:var(--ink-soft); font-size:17px; max-width:64ch; margin:0 0 18px;}
+  .meta{display:flex; gap:18px; flex-wrap:wrap; font-family:var(--font-mono); font-size:12.5px; color:var(--ink-faint); border-top:1px solid var(--border); padding-top:14px;}
+  .meta b{color:var(--ink-soft); font-weight:600;}
+
+  section.part{padding-top:56px; margin-top:-16px; border-top:1px solid var(--border);}
+  section.part:first-of-type{border-top:none;}
+  .part-eyebrow{font-family:var(--font-mono); text-transform:uppercase; letter-spacing:.08em; font-size:12px; color:var(--accent); margin-bottom:6px;}
+  .part-heading{font-size:26px; margin:0 0 12px;}
+  .part-intro{color:var(--ink-soft); max-width:74ch; margin:0 0 28px; font-size:15.5px;}
+
+  article.item{margin:0 0 34px; max-width:78ch;}
+  article.item h3{font-size:18px; margin:0 0 8px; display:flex; align-items:center; gap:10px;}
+  article.item p, article.item ul{margin:0; color:var(--ink-soft); font-size:15.5px;}
+  article.item ul{padding-left:20px;}
+  article.item li{margin-bottom:4px;}
+  article.item p + p{margin-top:8px;}
+
+  .tag{display:inline-block; font-family:var(--font-mono); font-size:10.5px; letter-spacing:.03em; text-transform:uppercase; padding:2px 8px; border-radius:20px; font-weight:600;}
+  .tag-confirmed{background:var(--accent-soft); color:var(--accent-ink);}
+  .tag-assumption{background:var(--amber-soft); color:var(--amber);}
+  .tag-open{background:var(--open-soft); color:var(--open);}
+  .tag-risk{background:var(--risk-soft); color:var(--risk);}
+
+  .table-wrap{overflow-x:auto; margin:14px 0 32px; border:1px solid var(--border); border-radius:8px; max-width:100%;}
+  table{border-collapse:collapse; width:100%; min-width:640px; font-size:14px; background:var(--surface);}
+  th,td{text-align:left; padding:10px 14px; border-bottom:1px solid var(--border); vertical-align:top;}
+  th{font-family:var(--font-mono); font-size:11px; text-transform:uppercase; letter-spacing:.05em; color:var(--ink-faint); background:var(--surface-2); font-weight:600;}
+  tr:last-child td{border-bottom:none;}
+
+  /* Sitemap tree */
+  .tree{font-family:var(--font-mono); font-size:13.5px; background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:20px 24px; margin:14px 0 32px; overflow-x:auto;}
+  .tree .l0{color:var(--ink);}
+  .tree .l1{color:var(--ink-soft); padding-left:22px; display:block;}
+  .tree .l2{color:var(--ink-faint); padding-left:44px; display:block;}
+  .tree .tag{margin-left:8px; vertical-align:2px;}
+
+  /* Flow diagrams (reused pattern) */
+  .diagram{background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:22px; margin:14px 0 30px; overflow-x:auto;}
+  .flow{display:flex; align-items:center; gap:0; min-width:max-content; padding:4px 0; flex-wrap:nowrap;}
+  .flow-node{background:var(--surface-2); border:1px solid var(--border); border-radius:8px; padding:11px 15px; min-width:118px; text-align:center; font-size:12.5px; line-height:1.35;}
+  .flow-node .fn-title{font-weight:600; color:var(--ink); display:block;}
+  .flow-node .fn-sub{color:var(--ink-faint); font-size:10.5px; font-family:var(--font-mono); display:block; margin-top:3px;}
+  .flow-node.accent{background:var(--accent-soft); border-color:color-mix(in srgb, var(--accent) 40%, transparent);}
+  .flow-arrow{width:28px; height:2px; background:var(--wire); position:relative; flex-shrink:0;}
+  .flow-arrow::after{content:""; position:absolute; right:0; top:50%; transform:translateY(-50%); border-style:solid; border-width:4px 0 4px 7px; border-color:transparent transparent transparent var(--wire);}
+  .diagram-caption{font-size:12.5px; color:var(--ink-faint); margin-top:12px; font-family:var(--font-mono);}
+  .step-list{margin:14px 0 30px; padding-left:0; list-style:none; counter-reset:step; font-size:14.5px;}
+  .step-list li{counter-increment:step; padding:8px 0 8px 34px; position:relative; border-bottom:1px solid var(--border); color:var(--ink-soft);}
+  .step-list li:last-child{border-bottom:none;}
+  .step-list li::before{content:counter(step); position:absolute; left:0; top:8px; width:22px; height:22px; border-radius:50%; background:var(--surface-2); border:1px solid var(--border); font-family:var(--font-mono); font-size:11px; display:flex; align-items:center; justify-content:center; color:var(--ink-faint);}
+
+  /* Screen spec cards */
+  .screen-card{background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:20px 22px; margin:14px 0 26px; max-width:78ch;}
+  .screen-card h4{font-size:16px; margin:0 0 2px; display:flex; align-items:center; gap:10px;}
+  .screen-card .screen-num{font-family:var(--font-mono); color:var(--ink-faint); font-weight:400; font-size:12px;}
+  dl.field-grid{display:grid; grid-template-columns:132px 1fr; gap:7px 16px; margin:14px 0 0; font-size:13.5px;}
+  dl.field-grid dt{font-family:var(--font-mono); text-transform:uppercase; letter-spacing:.04em; font-size:10.5px; color:var(--ink-faint); padding-top:2px;}
+  dl.field-grid dd{margin:0; color:var(--ink-soft);}
+
+  .pattern-grid{display:grid; grid-template-columns:1fr 1fr; gap:16px; margin:14px 0 30px;}
+  @media (max-width:700px){ .pattern-grid{grid-template-columns:1fr;} }
+  .pattern-card{background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:16px 18px;}
+  .pattern-card .p-label{font-family:var(--font-mono); text-transform:uppercase; font-size:10.5px; letter-spacing:.05em; color:var(--accent); margin-bottom:6px; display:block;}
+  .pattern-card p{margin:0; font-size:14px; color:var(--ink-soft);}
+
+  footer.doc-footer{max-width:78ch; margin-top:60px; padding-top:24px; border-top:1px solid var(--border); color:var(--ink-faint); font-size:13.5px;}
+  ::selection{background:var(--accent-soft); color:var(--accent-ink);}
+  a:focus-visible{outline:2px solid var(--accent); outline-offset:2px;}
+  @media (prefers-reduced-motion:reduce){ *{scroll-behavior:auto !important;} }
+  html{scroll-behavior:smooth;}
+</style>
+
+<div class="layout">
+  <nav class="toc">
+    <div class="eyebrow">On this page</div>
+    <ol>
+      <li class="part-title">Structure</li>
+      <li><a href="#s-sitemap">Sitemap</a></li>
+      <li><a href="#s-nav">Navigation structure</a></li>
+      <li class="part-title">Core flows</li>
+      <li><a href="#f-onboarding">Onboarding</a></li>
+      <li><a href="#f-profile">Profile building</a></li>
+      <li><a href="#f-upload">CV upload</a></li>
+      <li><a href="#f-interview">Guided interview</a></li>
+      <li><a href="#f-discovery">Job discovery</a></li>
+      <li><a href="#f-details">Job details</a></li>
+      <li><a href="#f-compare">Job comparison</a></li>
+      <li><a href="#f-applications">Application tracking</a></li>
+      <li><a href="#f-courses">Course recommendations</a></li>
+      <li><a href="#f-coach">AI coach conversation</a></li>
+      <li><a href="#f-settings">Settings & privacy</a></li>
+      <li><a href="#f-delete">Account deletion</a></li>
+      <li class="part-title">Screen specs</li>
+      <li><a href="#screens">10 key screens</a></li>
+      <li class="part-title">Behavior</li>
+      <li><a href="#s-states">States</a></li>
+      <li><a href="#s-device">Mobile vs desktop</a></li>
+      <li><a href="#s-a11y">Accessibility</a></li>
+      <li class="part-title">Before Phase 4</li>
+      <li><a href="#s-assets">Assets & access needed</a></li>
+    </ol>
+  </nav>
+
+  <main>
+    <header class="hero">
+      <div class="eyebrow">Job Coach — Information Architecture & UX</div>
+      <h1 class="title">Phase 3: IA & UX Framework</h1>
+      <p class="subtitle">Structure and behavior before pixels: sitemap, navigation, every core flow, low-fidelity screen specs, and the state patterns that hold the whole thing together — no visual design yet, that's Phase&nbsp;4.</p>
+      <div class="meta">
+        <span><b>Status</b> Draft — awaiting your approval</span>
+        <span><b>Phase 2</b> Approved — Cloudflare Workers</span>
+        <span><b>Next</b> Phase 4 — UI & Design System</span>
+      </div>
+    </header>
+
+    <!-- STRUCTURE -->
+    <section class="part" id="s-sitemap">
+      <div class="part-eyebrow">Part A — Structure</div>
+      <h2 class="part-heading">Sitemap & navigation</h2>
+
+      <article class="item"><h3>Sitemap</h3>
+        <div class="tree">
+<span class="l0">/</span> <span class="tag tag-open">routes by auth state</span>
+<span class="l1">/welcome <span class="tag tag-confirmed">MVP</span></span>
+<span class="l1">/login, /signup <span class="tag tag-confirmed">MVP</span></span>
+<span class="l1">/onboarding/upload <span class="tag tag-confirmed">MVP</span></span>
+<span class="l1">/onboarding/review <span class="tag tag-confirmed">MVP</span></span>
+<span class="l1">/onboarding/interview <span class="tag tag-confirmed">MVP</span></span>
+<span class="l1">/dashboard <span class="tag tag-confirmed">MVP</span></span>
+<span class="l1">/profile <span class="tag tag-confirmed">MVP</span></span>
+<span class="l2">/profile/documents</span>
+<span class="l1">/coach <span class="tag tag-confirmed">MVP</span></span>
+<span class="l1">/jobs <span class="tag tag-confirmed">MVP</span></span>
+<span class="l2">/jobs/:id</span>
+<span class="l2">/jobs/saved</span>
+<span class="l1">/settings <span class="tag tag-confirmed">MVP</span></span>
+<span class="l2">/settings/privacy</span>
+<span class="l2">/settings/language</span>
+<span class="l1">/applications <span class="tag tag-open">post-MVP</span></span>
+<span class="l1">/learning <span class="tag tag-open">post-MVP</span></span>
+        </div>
+      </article>
+
+      <article class="item" id="s-nav"><h3>Navigation structure</h3>
+        <p><b>Primary nav (5 items):</b> Dashboard · Career Profile · Coach · Jobs · Settings — identical set on every device, so muscle memory transfers between mobile and desktop.</p>
+        <p><b>Mobile:</b> bottom tab bar, five icons, current section highlighted.<br><b>Desktop:</b> left sidebar, same five items, more label space.</p>
+        <p><b>Coach is not confined to its own tab.</b> A persistent quick-access affordance (docked panel on desktop, floating action button on mobile) reaches the coach from any screen — carrying context from wherever the user was (e.g. "ask coach about this job" from a job details screen opens Coach pre-loaded with that job). This is a structural decision, not a visual one: the coach is meant to feel woven through the product, not parked in a single chat screen.</p>
+      </article>
+    </section>
+
+    <!-- CORE FLOWS -->
+    <section class="part" id="f-onboarding">
+      <div class="part-eyebrow">Part B — Core Flows</div>
+      <h2 class="part-heading">Every path through the product</h2>
+
+      <article class="item"><h3>Onboarding <span class="tag tag-confirmed">MVP</span></h3>
+        <div class="diagram"><div class="flow">
+          <div class="flow-node"><span class="fn-title">Sign up</span></div><div class="flow-arrow"></div>
+          <div class="flow-node"><span class="fn-title">Welcome & consent</span></div><div class="flow-arrow"></div>
+          <div class="flow-node accent"><span class="fn-title">Choose start</span><span class="fn-sub">upload vs manual</span></div><div class="flow-arrow"></div>
+          <div class="flow-node"><span class="fn-title">Guided interview</span></div><div class="flow-arrow"></div>
+          <div class="flow-node"><span class="fn-title">First coach chat</span></div><div class="flow-arrow"></div>
+          <div class="flow-node"><span class="fn-title">Dashboard</span></div>
+        </div><div class="diagram-caption">"Choose start" branches into the CV Upload flow or the Profile-Building flow below, then rejoins at Guided Interview.</div></div>
+      </article>
+
+      <article class="item" id="f-profile"><h3>Profile building (manual path) <span class="tag tag-confirmed">MVP</span></h3>
+        <div class="diagram"><div class="flow">
+          <div class="flow-node"><span class="fn-title">Choose category</span></div><div class="flow-arrow"></div>
+          <div class="flow-node"><span class="fn-title">Structured form</span></div><div class="flow-arrow"></div>
+          <div class="flow-node accent"><span class="fn-title">Save</span><span class="fn-sub">tagged User-Stated</span></div><div class="flow-arrow"></div>
+          <div class="flow-node"><span class="fn-title">Profile overview</span><span class="fn-sub">completion % updates</span></div>
+        </div></div>
+      </article>
+
+      <article class="item" id="f-upload"><h3>CV upload <span class="tag tag-confirmed">MVP</span></h3>
+        <div class="diagram"><div class="flow">
+          <div class="flow-node"><span class="fn-title">Select file</span></div><div class="flow-arrow"></div>
+          <div class="flow-node"><span class="fn-title">Upload</span></div><div class="flow-arrow"></div>
+          <div class="flow-node accent"><span class="fn-title">Claude extracts</span><span class="fn-sub">loading state</span></div><div class="flow-arrow"></div>
+          <div class="flow-node"><span class="fn-title">Extraction review</span></div><div class="flow-arrow"></div>
+          <div class="flow-node"><span class="fn-title">Confirm fields</span></div><div class="flow-arrow"></div>
+          <div class="flow-node"><span class="fn-title">Profile updated</span></div>
+        </div></div>
+      </article>
+
+      <article class="item" id="f-interview"><h3>Guided career interview <span class="tag tag-confirmed">MVP</span></h3>
+        <div class="diagram"><div class="flow">
+          <div class="flow-node"><span class="fn-title">Identify gaps</span></div><div class="flow-arrow"></div>
+          <div class="flow-node accent"><span class="fn-title">Present question group</span><span class="fn-sub">3–5 at a time</span></div><div class="flow-arrow"></div>
+          <div class="flow-node"><span class="fn-title">Answer or skip</span></div><div class="flow-arrow"></div>
+          <div class="flow-node"><span class="fn-title">Save progress</span></div><div class="flow-arrow"></div>
+          <div class="flow-node"><span class="fn-title">Repeat or resume later</span></div>
+        </div><div class="diagram-caption">Never re-asks a question the profile already answers, confirmed or inferred-and-verified.</div></div>
+      </article>
+
+      <article class="item" id="f-discovery"><h3>Job discovery <span class="tag tag-confirmed">MVP</span></h3>
+        <div class="diagram"><div class="flow">
+          <div class="flow-node"><span class="fn-title">Feed loads</span><span class="fn-sub">ranked by score</span></div><div class="flow-arrow"></div>
+          <div class="flow-node"><span class="fn-title">Filter</span><span class="fn-sub">location, model, etc.</span></div><div class="flow-arrow"></div>
+          <div class="flow-node accent"><span class="fn-title">Save or dismiss</span></div><div class="flow-arrow"></div>
+          <div class="flow-node"><span class="fn-title">Feed learns</span><span class="fn-sub">dismissed excluded</span></div>
+        </div></div>
+      </article>
+
+      <article class="item" id="f-details"><h3>Job details <span class="tag tag-confirmed">MVP</span></h3>
+        <div class="diagram"><div class="flow">
+          <div class="flow-node"><span class="fn-title">Open job card</span></div><div class="flow-arrow"></div>
+          <div class="flow-node accent"><span class="fn-title">Full detail + match reason</span></div><div class="flow-arrow"></div>
+          <div class="flow-node"><span class="fn-title">Save / Dismiss / Ask coach / View source</span></div>
+        </div><div class="diagram-caption">"View original listing" always opens externally and is clearly marked as leaving the app.</div></div>
+      </article>
+
+      <article class="item" id="f-compare"><h3>Job comparison <span class="tag tag-assumption">MVP — lightweight</span></h3>
+        <ol class="step-list">
+          <li>From Saved Jobs, select 2–3 listings</li>
+          <li>View side-by-side: score, salary (if available), location, work model, top missing qualifications</li>
+          <li>No dedicated comparison engine at MVP — this is a display transform of already-saved data, not new computation</li>
+        </ol>
+        <p>Coach-narrated comparison ("which of these actually fits you better, and why") is a natural post-MVP extension once this pattern is validated.</p>
+      </article>
+
+      <article class="item" id="f-applications"><h3>Application tracking <span class="tag tag-open">post-MVP</span></h3>
+        <ol class="step-list">
+          <li>User manually sets a status per saved job: Not applied / Applied / Interviewing / Offer / Rejected</li>
+          <li>Optional notes and follow-up reminders</li>
+          <li>No automatic submission, ever — this logs what the user did outside the app</li>
+        </ol>
+      </article>
+
+      <article class="item" id="f-courses"><h3>Course recommendations <span class="tag tag-open">post-MVP</span></h3>
+        <ol class="step-list">
+          <li>Triggered from a skill gap surfaced in a coach conversation or job match</li>
+          <li>Shows curated provider search links per gap (link-out, per the Phase 1 strategy)</li>
+          <li>User manually marks a resource "started" / "completed" — no LMS integration at this stage</li>
+        </ol>
+      </article>
+
+      <article class="item" id="f-coach"><h3>AI coach conversation <span class="tag tag-confirmed">MVP</span></h3>
+        <div class="diagram"><div class="flow">
+          <div class="flow-node"><span class="fn-title">Open from anywhere</span><span class="fn-sub">persistent affordance</span></div><div class="flow-arrow"></div>
+          <div class="flow-node"><span class="fn-title">Send message</span></div><div class="flow-arrow"></div>
+          <div class="flow-node accent"><span class="fn-title">Response + citation</span><span class="fn-sub">names the profile fact</span></div><div class="flow-arrow"></div>
+          <div class="flow-node"><span class="fn-title">Follow-up or new topic</span></div>
+        </div><div class="diagram-caption">If a recommendation would need information the profile doesn't have, the coach says so and offers to collect it — it does not guess.</div></div>
+      </article>
+
+      <article class="item" id="f-settings"><h3>Settings & privacy <span class="tag tag-confirmed">MVP</span></h3>
+        <div class="diagram"><div class="flow">
+          <div class="flow-node"><span class="fn-title">Settings home</span></div><div class="flow-arrow"></div>
+          <div class="flow-node accent"><span class="fn-title">Privacy tab</span><span class="fn-sub">consent, export, delete</span></div><div class="flow-arrow"></div>
+          <div class="flow-node"><span class="fn-title">Toggle / export / delete</span></div>
+        </div></div>
+      </article>
+
+      <article class="item" id="f-delete"><h3>Account deletion <span class="tag tag-confirmed">MVP</span></h3>
+        <div class="diagram"><div class="flow">
+          <div class="flow-node"><span class="fn-title">Delete request</span></div><div class="flow-arrow"></div>
+          <div class="flow-node"><span class="fn-title">What gets deleted</span><span class="fn-sub">shown explicitly</span></div><div class="flow-arrow"></div>
+          <div class="flow-node accent"><span class="fn-title">Re-auth / type "DELETE"</span></div><div class="flow-arrow"></div>
+          <div class="flow-node"><span class="fn-title">Cascade delete</span></div><div class="flow-arrow"></div>
+          <div class="flow-node"><span class="fn-title">Confirmation email</span></div>
+        </div><div class="diagram-caption">Data export is offered explicitly before deletion, not buried behind it. Failed re-auth blocks deletion — no partial deletes.</div></div>
+      </article>
+    </section>
+
+    <!-- SCREEN SPECS -->
+    <section class="part" id="screens">
+      <div class="part-eyebrow">Part C — Screen Specs</div>
+      <h2 class="part-heading">The 10 screens that carry the product</h2>
+      <p class="part-intro">Low-fidelity specs only — purpose, actions, AI behavior, and trust/privacy notes. No visual treatment yet.</p>
+
+      <div class="screen-card"><h4><span class="screen-num">01</span> Welcome / Onboarding Start</h4>
+        <dl class="field-grid">
+          <dt>Purpose</dt><dd>First screen after signup; sets expectations and captures explicit consent before any data collection.</dd>
+          <dt>Primary action</dt><dd>Choose "Upload CV" or "Enter manually"</dd>
+          <dt>Secondary actions</dt><dd>Read privacy summary; switch language</dd>
+          <dt>AI behavior</dt><dd>None active on this screen</dd>
+          <dt>Data dependencies</dt><dd>None</dd>
+          <dt>Trust indicators</dt><dd>Plain-language consent summary; explicit "Claude never invents your qualifications" statement</dd>
+          <dt>Privacy</dt><dd>Consent captured and versioned before the user can proceed</dd>
+          <dt>Success</dt><dd>Routes to Upload or Manual entry</dd>
+          <dt>Failure</dt><dd>User abandons — account exists, profile empty, re-shown next login</dd>
+        </dl>
+      </div>
+
+      <div class="screen-card"><h4><span class="screen-num">02</span> CV Upload</h4>
+        <dl class="field-grid">
+          <dt>Purpose</dt><dd>Fastest path to a populated profile</dd>
+          <dt>Primary action</dt><dd>Select/drag a file and upload</dd>
+          <dt>Secondary actions</dt><dd>Skip to manual entry; upload a certificate</dd>
+          <dt>AI behavior</dt><dd>None yet — extraction happens on the next screen</dd>
+          <dt>Data dependencies</dt><dd>File stored in Supabase Storage</dd>
+          <dt>Trust indicators</dt><dd>"Your file is encrypted and only used to build your profile"</dd>
+          <dt>Privacy</dt><dd>Covered under onboarding consent; deletable anytime from Settings</dd>
+          <dt>Success</dt><dd>Routes to Extraction Review</dd>
+          <dt>Failure</dt><dd>Unsupported/corrupt file → inline error, manual entry offered immediately</dd>
+        </dl>
+      </div>
+
+      <div class="screen-card"><h4><span class="screen-num">03</span> Extraction Review & Correction</h4>
+        <dl class="field-grid">
+          <dt>Purpose</dt><dd>Turn AI-extracted text into a confirmed profile — the core trust moment of the product</dd>
+          <dt>Primary action</dt><dd>Review each field, confirm or correct it</dd>
+          <dt>Secondary actions</dt><dd>Add a missed field; re-upload a different file</dd>
+          <dt>AI behavior</dt><dd>Structured extraction, every field pre-tagged Confirmed/Inferred/Missing; nothing writes to the permanent profile until this screen completes</dd>
+          <dt>Data dependencies</dt><dd>Extraction result linked to the uploaded document</dd>
+          <dt>Trust indicators</dt><dd>Visible per-field tag (e.g. "AI-inferred — please confirm")</dd>
+          <dt>Privacy</dt><dd>User can discard the whole extraction and switch to manual entry</dd>
+          <dt>Success</dt><dd>Fields confirmed → profile updated → routes to Guided Interview</dd>
+          <dt>Failure</dt><dd>User leaves mid-review → saved as a resumable draft</dd>
+        </dl>
+      </div>
+
+      <div class="screen-card"><h4><span class="screen-num">04</span> Guided Career Interview</h4>
+        <dl class="field-grid">
+          <dt>Purpose</dt><dd>Fill the gaps extraction couldn't answer, personalized to what's actually missing</dd>
+          <dt>Primary action</dt><dd>Answer the current question group</dd>
+          <dt>Secondary actions</dt><dd>Skip a question; ask "why are you asking this"</dd>
+          <dt>AI behavior</dt><dd>Claude generates the next question set from current profile gaps; never re-asks a confirmed answer</dd>
+          <dt>Data dependencies</dt><dd>Current profile completeness state</dd>
+          <dt>Trust indicators</dt><dd>"Why we're asking" microcopy on sensitive questions (salary, visa)</dd>
+          <dt>Privacy</dt><dd>Sensitive fields clearly marked before the user answers</dd>
+          <dt>Success</dt><dd>Profile reaches usable completeness → routes to first Coach conversation</dd>
+          <dt>Failure</dt><dd>User skips most questions → dashboard shows the gap, resumable anytime</dd>
+        </dl>
+      </div>
+
+      <div class="screen-card"><h4><span class="screen-num">05</span> Career Profile (Dashboard/Overview)</h4>
+        <dl class="field-grid">
+          <dt>Purpose</dt><dd>One place to see and manage the full structured profile</dd>
+          <dt>Primary action</dt><dd>View or edit any category</dd>
+          <dt>Secondary actions</dt><dd>Export profile; view provenance detail; jump to interview to fill gaps</dd>
+          <dt>AI behavior</dt><dd>None here beyond displaying prior AI-inferred tags</dd>
+          <dt>Data dependencies</dt><dd>All profile tables</dd>
+          <dt>Trust indicators</dt><dd>Completion %; per-category provenance breakdown ("3 fields need verification")</dd>
+          <dt>Privacy</dt><dd>Consent toggles per category link to Settings</dd>
+          <dt>Success</dt><dd>User finds and updates a field successfully</dd>
+          <dt>Failure</dt><dd>n/a — a viewing/editing hub, not a task with a terminal failure</dd>
+        </dl>
+      </div>
+
+      <div class="screen-card"><h4><span class="screen-num">06</span> Job Discovery Feed</h4>
+        <dl class="field-grid">
+          <dt>Purpose</dt><dd>Show ranked, explainable job matches</dd>
+          <dt>Primary action</dt><dd>Save or dismiss a job</dd>
+          <dt>Secondary actions</dt><dd>Filter; open details; ask coach about a job</dd>
+          <dt>AI behavior</dt><dd>Claude-generated match score and plain-language explanation per listing</dd>
+          <dt>Data dependencies</dt><dd><code>jobs</code>, <code>job_matches</code>, confirmed preferences</dd>
+          <dt>Trust indicators</dt><dd>Explanation always visible next to the score; "what's missing" shown up front</dd>
+          <dt>Privacy</dt><dd>Standard profile-consent only</dd>
+          <dt>Success</dt><dd>User saves a relevant job or refines filters productively</dd>
+          <dt>Failure</dt><dd>No matches available → honest empty state, not padded with irrelevant results</dd>
+        </dl>
+      </div>
+
+      <div class="screen-card"><h4><span class="screen-num">07</span> Job Details</h4>
+        <dl class="field-grid">
+          <dt>Purpose</dt><dd>Full listing plus the system's reasoning about fit</dd>
+          <dt>Primary action</dt><dd>Save, Dismiss, or view original listing</dd>
+          <dt>Secondary actions</dt><dd>Ask coach about this job (opens Coach with job context)</dd>
+          <dt>AI behavior</dt><dd>Expanded match explanation with specific missing qualifications and a suggested next step</dd>
+          <dt>Data dependencies</dt><dd>Single job + match row</dd>
+          <dt>Trust indicators</dt><dd>"Original source" link always visible, marked as leaving the app</dd>
+          <dt>Privacy</dt><dd>None additional</dd>
+          <dt>Success</dt><dd>User takes an action</dd>
+          <dt>Failure</dt><dd>Listing expired since last fetch → marked "no longer available," never silently removed</dd>
+        </dl>
+      </div>
+
+      <div class="screen-card"><h4><span class="screen-num">08</span> AI Coach Chat</h4>
+        <dl class="field-grid">
+          <dt>Purpose</dt><dd>Persistent, explainable coaching conversation</dd>
+          <dt>Primary action</dt><dd>Send a message</dd>
+          <dt>Secondary actions</dt><dd>Reference a saved job; revisit a past conversation</dd>
+          <dt>AI behavior</dt><dd>Every substantive recommendation cites the profile fact behind it; flags missing information instead of guessing; never takes an external action without a separate explicit confirmation</dd>
+          <dt>Data dependencies</dt><dd>Confirmed profile fields, conversation history, optional job reference</dd>
+          <dt>Trust indicators</dt><dd>Inline citation chips ("based on your 3 years in marketing"); visible "not certain — want to confirm?" pattern</dd>
+          <dt>Privacy</dt><dd>Governed by the Session Context / memory-tier model from Phase 1</dd>
+          <dt>Success</dt><dd>User gets an actionable, explained recommendation</dd>
+          <dt>Failure</dt><dd>API error → "coach temporarily unavailable, try again" — never a fabricated fallback answer</dd>
+        </dl>
+      </div>
+
+      <div class="screen-card"><h4><span class="screen-num">09</span> Settings & Privacy</h4>
+        <dl class="field-grid">
+          <dt>Purpose</dt><dd>Full visibility and control over stored data</dd>
+          <dt>Primary action</dt><dd>Toggle consent, export data, or delete account</dd>
+          <dt>Secondary actions</dt><dd>Change language; change password</dd>
+          <dt>AI behavior</dt><dd>None</dd>
+          <dt>Data dependencies</dt><dd><code>consent_log</code>, full profile for export</dd>
+          <dt>Trust indicators</dt><dd>"What's remembered" viewer grouped by provenance; consent version history</dd>
+          <dt>Privacy</dt><dd>This screen is the privacy control center — every Phase 1 consent commitment must be exercisable here</dd>
+          <dt>Success</dt><dd>Change takes effect immediately and is logged</dd>
+          <dt>Failure</dt><dd>n/a</dd>
+        </dl>
+      </div>
+
+      <div class="screen-card"><h4><span class="screen-num">10</span> Account Deletion Confirmation</h4>
+        <dl class="field-grid">
+          <dt>Purpose</dt><dd>Let a user permanently and fully leave, without dark patterns</dd>
+          <dt>Primary action</dt><dd>Confirm deletion (typed confirmation or re-auth)</dd>
+          <dt>Secondary actions</dt><dd>Cancel; export data first (offered explicitly, not buried)</dd>
+          <dt>AI behavior</dt><dd>None</dd>
+          <dt>Data dependencies</dt><dd>Triggers full cascade delete across all tables</dd>
+          <dt>Trust indicators</dt><dd>Explicit list of what gets deleted before confirming</dd>
+          <dt>Privacy</dt><dd>The functional guarantee behind the Phase 1 "delete anytime" promise</dd>
+          <dt>Success</dt><dd>Account and all data removed, confirmation email sent</dd>
+          <dt>Failure</dt><dd>Re-auth fails → deletion blocked, no partial deletes ever occur</dd>
+        </dl>
+      </div>
+    </section>
+
+    <!-- BEHAVIOR -->
+    <section class="part" id="s-states">
+      <div class="part-eyebrow">Part D — Behavior</div>
+      <h2 class="part-heading">States, devices, accessibility</h2>
+
+      <article class="item"><h3>State patterns</h3>
+        <div class="pattern-grid">
+          <div class="pattern-card"><span class="p-label">Empty</span><p>Always explains why it's empty and gives one clear next action — e.g. "No job matches yet — complete your profile to see matches," never a bare "nothing here."</p></div>
+          <div class="pattern-card"><span class="p-label">Loading</span><p>Skeleton screens for lists (jobs, profile fields); a distinct "thinking" indicator for Claude responses, since AI latency reads differently to users than network latency.</p></div>
+          <div class="pattern-card"><span class="p-label">Error</span><p>Names what went wrong in plain language and offers a next step (retry, manual entry, contact) — never a raw error code shown to the user.</p></div>
+          <div class="pattern-card"><span class="p-label">Permission</span><p>When a feature needs a consent category not yet granted, shows what's needed and why inline, with a direct link to grant it — never silently disabled without explanation.</p></div>
+        </div>
+      </article>
+
+      <article class="item" id="s-device"><h3>Mobile vs. desktop</h3>
+        <p><b>Mobile:</b> bottom tab bar (5 items), single-column layouts, coach reachable via a floating action button, native file picker/camera for document capture.</p>
+        <p><b>Desktop:</b> left sidebar nav, multi-column layouts where useful (e.g. profile categories as a two-pane view), coach reachable via a docked panel, drag-and-drop upload.</p>
+        <p><b>Both:</b> RTL mirroring for Arabic applies to layout direction, not just text — nav position, directional icons (back arrows), and form field order all flip together.</p>
+      </article>
+
+      <article class="item" id="s-a11y"><h3>Accessibility considerations</h3>
+        <ul>
+          <li>A full keyboard path through every flow above, especially Upload → Review → Interview</li>
+          <li>A field's Confirmed/Inferred state is announced to screen readers, not conveyed by color alone</li>
+          <li>The coach chat interface is screen-reader usable — message roles and loading state are announced</li>
+          <li>Touch targets on the mobile tab bar and job-card actions meet minimum size guidance</li>
+          <li>RTL layout tested with a screen reader in Arabic, not just checked visually</li>
+        </ul>
+      </article>
+    </section>
+
+    <!-- ASSETS -->
+    <section class="part" id="s-assets">
+      <div class="part-eyebrow">Before Phase 4</div>
+      <h2 class="part-heading">Assets & access needed</h2>
+      <p class="part-intro">Phase 4 (UI & Design System) can start once these are settled — no need to have all of them today.</p>
+
+      <div class="table-wrap"><table>
+        <tr><th>Item</th><th>Status</th><th>Note</th></tr>
+        <tr><td>Product name</td><td><span class="tag tag-open">Open</span></td><td>Confirmed folder name is unrelated — a real name is still needed</td></tr>
+        <tr><td>Domain</td><td><span class="tag tag-open">Open</span></td><td>Register via Cloudflare once a name is picked</td></tr>
+        <tr><td>Brand logo</td><td><span class="tag tag-open">Open</span></td><td></td></tr>
+        <tr><td>Brand colors</td><td><span class="tag tag-open">Open</span></td><td>I'll propose options in Phase 4 if none exist</td></tr>
+        <tr><td>Typography</td><td><span class="tag tag-open">Open</span></td><td>I'll propose options in Phase 4 if none exist</td></tr>
+        <tr><td>Icon style</td><td><span class="tag tag-open">Open</span></td><td></td></tr>
+        <tr><td>Illustration style</td><td><span class="tag tag-open">Open</span></td><td>Optional — can launch without custom illustration</td></tr>
+        <tr><td>Design references</td><td><span class="tag tag-open">Open</span></td><td>Any apps whose feel you admire, even loosely</td></tr>
+        <tr><td>Existing components</td><td><span class="tag tag-confirmed">None</span></td><td>Building the design system from scratch in Phase 4</td></tr>
+        <tr><td>Figma project</td><td><span class="tag tag-open">Not yet connected</span></td><td>You confirmed an account exists; connect when Phase 4 starts</td></tr>
+        <tr><td>GitHub organization</td><td><span class="tag tag-open">Not yet connected</span></td><td>You confirmed an account exists; connect when implementation starts</td></tr>
+        <tr><td>Accessibility standard</td><td><span class="tag tag-confirmed">WCAG 2.1 AA</span></td><td>Set in Phase 1, carried through</td></tr>
+        <tr><td>Supported devices</td><td><span class="tag tag-confirmed">Web, mobile + desktop</span></td><td>Web-first per your Phase 2 decision</td></tr>
+      </table></div>
+    </section>
+
+    <footer class="doc-footer">
+      Phase 3 draft — awaiting your approval before Phase 4 (UI & Design System) begins. Most open items above don't block approving this phase — they block starting Phase 4's visual work specifically.
+    </footer>
+  </main>
+</div>

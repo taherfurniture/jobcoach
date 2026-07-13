@@ -1,0 +1,312 @@
+<title>AI Job Coach — Phase 5 Implementation Plan</title>
+<style>
+  :root{
+    --bg:#F5F6F2; --surface:#FFFFFF; --surface-2:#ECEFE9; --border:#DCE0D6;
+    --ink:#16211C; --ink-soft:#4B564E; --ink-faint:#7C8880;
+    --accent:#1F6E5C; --accent-ink:#0F3F34; --accent-soft:#E4EFE9;
+    --amber:#96692A; --amber-soft:#F3E7D2;
+    --risk:#8C3A29; --risk-soft:#F3E0DB;
+    --open:#4B5768; --open-soft:#E7E9EE;
+    --wire:#B9C3B4;
+    --font-display:'Iowan Old Style','Source Serif Pro','Palatino Linotype',Georgia,ui-serif,serif;
+    --font-body:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+    --font-mono:ui-monospace,'Cascadia Code','SF Mono',Consolas,monospace;
+  }
+  @media (prefers-color-scheme:dark){
+    :root{ --bg:#10160F; --surface:#161F17; --surface-2:#1D2820; --border:#2A362C; --ink:#E8ECE5; --ink-soft:#AEB8AC; --ink-faint:#7E8B80; --accent:#57BC9F; --accent-ink:#BFEBDB; --accent-soft:#1B332A; --amber:#D9A94F; --amber-soft:#332A16; --risk:#DE8571; --risk-soft:#3A2620; --open:#9AA6B4; --open-soft:#232C34; --wire:#3A473D; }
+  }
+  :root[data-theme="dark"]{ --bg:#10160F; --surface:#161F17; --surface-2:#1D2820; --border:#2A362C; --ink:#E8ECE5; --ink-soft:#AEB8AC; --ink-faint:#7E8B80; --accent:#57BC9F; --accent-ink:#BFEBDB; --accent-soft:#1B332A; --amber:#D9A94F; --amber-soft:#332A16; --risk:#DE8571; --risk-soft:#3A2620; --open:#9AA6B4; --open-soft:#232C34; --wire:#3A473D; }
+  :root[data-theme="light"]{ --bg:#F5F6F2; --surface:#FFFFFF; --surface-2:#ECEFE9; --border:#DCE0D6; --ink:#16211C; --ink-soft:#4B564E; --ink-faint:#7C8880; --accent:#1F6E5C; --accent-ink:#0F3F34; --accent-soft:#E4EFE9; --amber:#96692A; --amber-soft:#F3E7D2; --risk:#8C3A29; --risk-soft:#F3E0DB; --open:#4B5768; --open-soft:#E7E9EE; --wire:#B9C3B4; }
+
+  *{box-sizing:border-box;}
+  body{margin:0; background:var(--bg); color:var(--ink); font-family:var(--font-body); line-height:1.55; font-size:16px; -webkit-font-smoothing:antialiased;}
+  h1,h2,h3{font-family:var(--font-display); text-wrap:balance; color:var(--ink); font-weight:600;}
+  a{color:var(--accent);}
+  .layout{display:grid; grid-template-columns:260px minmax(0,1fr); gap:0; max-width:1320px; margin:0 auto;}
+  @media (max-width:920px){ .layout{grid-template-columns:1fr;} }
+  nav.toc{position:sticky; top:0; align-self:start; height:100vh; overflow-y:auto; padding:28px 18px 40px 28px; border-right:1px solid var(--border); font-size:13.5px;}
+  @media (max-width:920px){ nav.toc{position:relative; height:auto; border-right:none; border-bottom:1px solid var(--border); padding:20px 20px 8px;} }
+  nav.toc .eyebrow{font-family:var(--font-mono); letter-spacing:.08em; text-transform:uppercase; color:var(--ink-faint); font-size:11px; margin-bottom:14px;}
+  nav.toc ol{list-style:none; margin:0 0 18px; padding:0;}
+  nav.toc .part-title{font-family:var(--font-mono); text-transform:uppercase; letter-spacing:.06em; font-size:11px; color:var(--accent); margin:18px 0 6px;}
+  nav.toc .part-title:first-child{margin-top:0;}
+  nav.toc li a{display:block; padding:3px 0; color:var(--ink-soft); text-decoration:none;}
+  nav.toc li a:hover{color:var(--accent);}
+  main{padding:44px clamp(20px,4vw,64px) 100px;}
+  header.hero{max-width:80ch; margin-bottom:36px;}
+  .eyebrow{font-family:var(--font-mono); letter-spacing:.08em; text-transform:uppercase; color:var(--accent); font-size:12px; margin-bottom:10px;}
+  h1.title{font-size:clamp(28px,4vw,40px); margin:0 0 14px; line-height:1.1;}
+  .subtitle{color:var(--ink-soft); font-size:17px; max-width:64ch; margin:0 0 18px;}
+  .meta{display:flex; gap:18px; flex-wrap:wrap; font-family:var(--font-mono); font-size:12.5px; color:var(--ink-faint); border-top:1px solid var(--border); padding-top:14px;}
+  .meta b{color:var(--ink-soft); font-weight:600;}
+  .callout{background:var(--amber-soft); border:1px solid color-mix(in srgb, var(--amber) 35%, transparent); border-left:3px solid var(--amber); border-radius:6px; padding:16px 20px; margin:28px 0; max-width:74ch; font-size:15px;}
+  .callout .cal-label{font-family:var(--font-mono); text-transform:uppercase; letter-spacing:.06em; font-size:11px; color:var(--amber); margin-bottom:6px; display:block;}
+  section.part{padding-top:56px; margin-top:-16px; border-top:1px solid var(--border);}
+  section.part:first-of-type{border-top:none;}
+  .part-eyebrow{font-family:var(--font-mono); text-transform:uppercase; letter-spacing:.08em; font-size:12px; color:var(--accent); margin-bottom:6px;}
+  .part-heading{font-size:26px; margin:0 0 12px;}
+  .part-intro{color:var(--ink-soft); max-width:74ch; margin:0 0 28px; font-size:15.5px;}
+  article.item{margin:0 0 32px; max-width:78ch;}
+  article.item h3{font-size:18px; margin:0 0 8px;}
+  article.item p, article.item ul{margin:0; color:var(--ink-soft); font-size:15.5px;}
+  article.item ul{padding-left:20px;}
+  article.item li{margin-bottom:4px;}
+  article.item p + p{margin-top:8px;}
+  .tag{display:inline-block; font-family:var(--font-mono); font-size:10.5px; letter-spacing:.03em; text-transform:uppercase; padding:2px 8px; border-radius:20px; font-weight:600;}
+  .tag-confirmed{background:var(--accent-soft); color:var(--accent-ink);}
+  .tag-assumption{background:var(--amber-soft); color:var(--amber);}
+  .tag-open{background:var(--open-soft); color:var(--open);}
+  .tag-risk{background:var(--risk-soft); color:var(--risk);}
+  .table-wrap{overflow-x:auto; margin:14px 0 32px; border:1px solid var(--border); border-radius:8px;}
+  table{border-collapse:collapse; width:100%; min-width:640px; font-size:14px; background:var(--surface);}
+  th,td{text-align:left; padding:10px 14px; border-bottom:1px solid var(--border); vertical-align:top;}
+  th{font-family:var(--font-mono); font-size:11px; text-transform:uppercase; letter-spacing:.05em; color:var(--ink-faint); background:var(--surface-2); font-weight:600;}
+  tr:last-child td{border-bottom:none;}
+  code{font-family:var(--font-mono); font-size:13px; background:var(--surface-2); padding:1px 6px; border-radius:4px;}
+
+  /* Roadmap timeline */
+  .timeline{background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:22px 24px; margin:14px 0 32px; overflow-x:auto;}
+  .tl-row{display:grid; grid-template-columns:110px 1fr; gap:14px; padding:10px 0; border-bottom:1px solid var(--border); align-items:center; min-width:560px;}
+  .tl-row:last-child{border-bottom:none;}
+  .tl-when{font-family:var(--font-mono); font-size:12px; color:var(--accent);}
+  .tl-bar{background:var(--accent-soft); border:1px solid color-mix(in srgb, var(--accent) 30%, transparent); border-radius:6px; padding:8px 12px; font-size:13.5px; color:var(--ink);}
+  .tl-bar b{color:var(--accent-ink);}
+
+  /* Tree for repo structure */
+  .tree{font-family:var(--font-mono); font-size:13px; background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:20px 24px; margin:14px 0 32px; overflow-x:auto; color:var(--ink-soft);}
+  .tree .l0{color:var(--ink);}
+  .tree .cmt{color:var(--ink-faint);}
+
+  .checklist{list-style:none; padding:0; margin:14px 0 30px; max-width:78ch;}
+  .checklist li{display:flex; gap:10px; padding:7px 0; border-bottom:1px solid var(--border); font-size:14.5px; color:var(--ink-soft);}
+  .checklist li:last-child{border-bottom:none;}
+  .checklist li::before{content:"☐"; color:var(--accent); flex-shrink:0;}
+
+  footer.doc-footer{max-width:78ch; margin-top:60px; padding-top:24px; border-top:1px solid var(--border); color:var(--ink-faint); font-size:13.5px;}
+  ::selection{background:var(--accent-soft); color:var(--accent-ink);}
+  a:focus-visible{outline:2px solid var(--accent); outline-offset:2px;}
+  @media (prefers-reduced-motion:reduce){ *{scroll-behavior:auto !important;} }
+  html{scroll-behavior:smooth;}
+</style>
+
+<div class="layout">
+  <nav class="toc">
+    <div class="eyebrow">On this page</div>
+    <ol>
+      <li class="part-title">Roadmap</li>
+      <li><a href="#s-roadmap">Development roadmap</a></li>
+      <li><a href="#s-sprints">Sprint plan</a></li>
+      <li><a href="#s-milestones">MVP milestones</a></li>
+      <li class="part-title">Work breakdown</li>
+      <li><a href="#s-breakdown">15 work areas</a></li>
+      <li class="part-title">Engineering</li>
+      <li><a href="#s-repo">Repo structure</a></li>
+      <li><a href="#s-branch">Branching & environments</a></li>
+      <li><a href="#s-standards">Coding standards</a></li>
+      <li class="part-title">Quality</li>
+      <li><a href="#s-testing">Testing strategy</a></li>
+      <li><a href="#s-security">Security & integration testing</a></li>
+      <li><a href="#s-uat">User acceptance testing</a></li>
+      <li class="part-title">Ship & operate</li>
+      <li><a href="#s-deploy">Deployment & monitoring</a></li>
+      <li><a href="#s-launch">Launch checklist</a></li>
+      <li><a href="#s-beta">Beta & feedback</a></li>
+      <li><a href="#s-post">Post-launch roadmap</a></li>
+      <li class="part-title">Before Sprint 1</li>
+      <li><a href="#s-access">Access needed</a></li>
+    </ol>
+  </nav>
+
+  <main>
+    <header class="hero">
+      <div class="eyebrow">Job Coach — Implementation Plan</div>
+      <h1 class="title">Phase 5: Implementation Planning</h1>
+      <p class="subtitle">Twelve weeks, six sprints, one solo non-technical founder and one AI-assisted builder. This turns every prior phase into an actual build order.</p>
+      <div class="meta">
+        <span><b>Status</b> Draft — awaiting your approval</span>
+        <span><b>Phase 4</b> Approved — Direction B</span>
+        <span><b>After this</b> Sprint 1 begins</span>
+      </div>
+    </header>
+
+    <!-- ROADMAP -->
+    <section class="part" id="s-roadmap">
+      <div class="part-eyebrow">Part A — Roadmap</div>
+      <h2 class="part-heading">Twelve weeks to pilot</h2>
+
+      <article class="item"><h3>Development roadmap</h3>
+        <div class="timeline">
+          <div class="tl-row"><span class="tl-when">Wk 1–2</span><div class="tl-bar"><b>Foundation</b> — repo, hosting, database, auth, nav shell, design tokens in code</div></div>
+          <div class="tl-row"><span class="tl-when">Wk 3–4</span><div class="tl-bar"><b>Profile core</b> — schema, manual entry, CV upload, first extraction pass</div></div>
+          <div class="tl-row"><span class="tl-when">Wk 5–6</span><div class="tl-bar"><b>Trust loop</b> — extraction review/correction UI, guided interview engine</div></div>
+          <div class="tl-row"><span class="tl-when">Wk 7–8</span><div class="tl-bar"><b>Coach</b> — chat interface, citations, context assembly, rate limiting</div></div>
+          <div class="tl-row"><span class="tl-when">Wk 9–10</span><div class="tl-bar"><b>Discovery</b> — job ingestion, match scoring, feed, details, dashboard</div></div>
+          <div class="tl-row"><span class="tl-when">Wk 11–12</span><div class="tl-bar"><b>Pilot-ready</b> — privacy controls, Arabic/RTL pass, accessibility pass, monitoring, soft launch</div></div>
+          <div class="tl-row"><span class="tl-when">Month 4+</span><div class="tl-bar">Iterate on pilot data — course recs, application tracking, paid tier, native app evaluation</div></div>
+        </div>
+      </article>
+
+      <article class="item" id="s-sprints"><h3>Sprint plan</h3>
+        <div class="table-wrap"><table>
+          <tr><th>Sprint</th><th>Weeks</th><th>Goal</th><th>Done means</th></tr>
+          <tr><td>1</td><td>1–2</td><td>Foundation</td><td>Auth works; a logged-in user sees an empty dashboard shell on Cloudflare, deployed from GitHub</td></tr>
+          <tr><td>2</td><td>3–4</td><td>Profile core</td><td>A user can enter data manually <em>or</em> upload a CV and see a first (unreviewed) structured extraction</td></tr>
+          <tr><td>3</td><td>5–6</td><td>Trust loop</td><td>Extraction review/correction is real; guided interview asks personalized, skippable, resumable questions</td></tr>
+          <tr><td>4</td><td>7–8</td><td>Coach</td><td>A user can chat with the coach and get a recommendation that cites a real profile fact</td></tr>
+          <tr><td>5</td><td>9–10</td><td>Discovery</td><td>Job matches appear, explained, saveable/dismissible, on a working dashboard</td></tr>
+          <tr><td>6</td><td>11–12</td><td>Pilot-ready</td><td>Every MVP acceptance criterion from Phase 1 passes, in English and Arabic, on mobile and desktop</td></tr>
+        </table></div>
+      </article>
+
+      <article class="item" id="s-milestones"><h3>MVP milestones</h3>
+        <div class="table-wrap"><table>
+          <tr><th>Milestone</th><th>Marks</th></tr>
+          <tr><td>M1 — Foundation live</td><td>End of Sprint 1</td></tr>
+          <tr><td>M2 — Profile pipeline works end-to-end</td><td>End of Sprint 2</td></tr>
+          <tr><td>M3 — Trust loop complete</td><td>End of Sprint 3</td></tr>
+          <tr><td>M4 — Coach live with citations</td><td>End of Sprint 4</td></tr>
+          <tr><td>M5 — Discovery & matching live</td><td>End of Sprint 5</td></tr>
+          <tr><td>M6 — Pilot launch</td><td>End of Sprint 6</td></tr>
+        </table></div>
+      </article>
+    </section>
+
+    <!-- WORK BREAKDOWN -->
+    <section class="part" id="s-breakdown">
+      <div class="part-eyebrow">Part B — Work Breakdown</div>
+      <h2 class="part-heading">Every area from the original brief, scoped</h2>
+      <div class="table-wrap"><table>
+        <tr><th>Area</th><th>MVP scope</th><th>When</th></tr>
+        <tr><td>Foundation</td><td>Repo, hosting, database, design tokens in code</td><td>Sprint 1</td></tr>
+        <tr><td>Authentication</td><td>Email/password + session via Supabase Auth</td><td>Sprint 1</td></tr>
+        <tr><td>Profile</td><td>Full schema, manual entry, correction UI</td><td>Sprint 2–3</td></tr>
+        <tr><td>Document processing</td><td>Upload, Claude extraction, provenance tagging</td><td>Sprint 2–3</td></tr>
+        <tr><td>Claude integration</td><td>Extraction calls, interview generation, coach conversation</td><td>Sprint 2, 4</td></tr>
+        <tr><td>Career questionnaire</td><td>Guided interview engine, gap-driven, resumable</td><td>Sprint 3</td></tr>
+        <tr><td>Job discovery</td><td>One feasible source, ingestion, normalization</td><td>Sprint 5</td></tr>
+        <tr><td>Matching</td><td>Per-job Claude scoring against profile</td><td>Sprint 5</td></tr>
+        <tr><td>Course recommendations</td><td><span class="tag tag-open">Post-MVP</span> — not built in these 12 weeks</td><td>Month 4+</td></tr>
+        <tr><td>Application tracking</td><td><span class="tag tag-open">Post-MVP</span></td><td>Month 4+</td></tr>
+        <tr><td>Notifications</td><td>Transactional email only (signup verification via Resend); no in-app notification system</td><td>Sprint 1</td></tr>
+        <tr><td>Admin</td><td><span class="tag tag-open">None</span> — founder uses the Supabase dashboard directly at pilot scale</td><td>n/a</td></tr>
+        <tr><td>Analytics</td><td>Lightweight custom events + Cloudflare Web Analytics</td><td>Sprint 6</td></tr>
+        <tr><td>Security</td><td>RLS policies, secrets hygiene, dependency scanning — ongoing, dedicated pass</td><td>All sprints, Sprint 6</td></tr>
+        <tr><td>Launch</td><td>Pilot soft launch to a small invited group</td><td>Sprint 6</td></tr>
+      </table></div>
+    </section>
+
+    <!-- ENGINEERING -->
+    <section class="part" id="s-repo">
+      <div class="part-eyebrow">Part C — Engineering</div>
+      <h2 class="part-heading">Repo, branches, environments, standards</h2>
+
+      <article class="item"><h3>GitHub repository structure</h3>
+        <div class="tree">
+<span class="l0">/app</span>            <span class="cmt"># Next.js routes — one folder per screen in the Phase 3 sitemap</span>
+<span class="l0">/components</span>     <span class="cmt"># UI components, matching the Phase 4 design system 1:1</span>
+<span class="l0">/lib</span>
+  <span class="l0">/claude</span>       <span class="cmt"># Anthropic SDK calls: extract, interview, coach, score</span>
+  <span class="l0">/prompts</span>      <span class="cmt"># versioned prompt files — changes are diffable and reviewable</span>
+  <span class="l0">/supabase</span>     <span class="cmt"># typed DB client, RLS-aware queries</span>
+<span class="l0">/supabase/migrations</span> <span class="cmt"># schema history, applied via Supabase CLI</span>
+<span class="l0">/tests</span>           <span class="cmt"># extraction test set, RLS tests, critical-path tests</span>
+<span class="l0">/docs</span>            <span class="cmt"># this framework, saved as the project's living reference</span>
+<span class="l0">.github/workflows</span> <span class="cmt"># CI: lint, typecheck, test on every PR</span>
+        </div>
+      </article>
+
+      <article class="item" id="s-branch"><h3>Branching & environments</h3>
+        <p><b>Branching:</b> <code>main</code> is production, always deployable. Every task gets a short-lived <code>feature/*</code> branch, merged via PR. No long-lived <code>develop</code> branch — with one builder (you + AI), that extra layer is pure overhead, not safety.</p>
+        <p><b>Environments:</b> Local dev and PR previews both point at a separate <b>dev Supabase project</b> and a low-spend <b>dev Claude key</b> — production data and production AI spend are never touched by a branch that isn't <code>main</code>.</p>
+      </article>
+
+      <article class="item" id="s-standards"><h3>Coding standards</h3>
+        <p>TypeScript strict mode, ESLint + Prettier configured from Sprint 1 so every AI-generated file lands consistent. <code>.env.example</code> checked into the repo; real secrets live only in Cloudflare/Supabase environment variables, never in git.</p>
+      </article>
+    </section>
+
+    <!-- QUALITY -->
+    <section class="part" id="s-testing">
+      <div class="part-eyebrow">Part D — Quality</div>
+      <h2 class="part-heading">Testing, security, acceptance</h2>
+
+      <article class="item"><h3>Testing strategy</h3>
+        <p>Pragmatic, not exhaustive: automated tests concentrate where a silent regression is expensive — auth, Row Level Security policies, provenance-tagging logic, consent enforcement. Everything else is covered by a manual QA checklist run before each production deploy, since 100% coverage isn't the right investment for a 12-week solo build.</p>
+      </article>
+
+      <article class="item"><h3>AI evaluation strategy</h3>
+        <p>Carried from Phase 2: the fixed multi-format, bilingual CV test set runs before any prompt change ships; real (consented) pilot extractions get spot-checked weekly; a rising per-field correction rate is treated as a direct prompt-quality alarm.</p>
+      </article>
+
+      <article class="item" id="s-security"><h3>Security testing</h3>
+        <ul>
+          <li>RLS verification: deliberately attempt cross-user data access in a test, confirm it's denied</li>
+          <li>Dependency scanning via GitHub Dependabot (free, on by default)</li>
+          <li>Secret scanning via GitHub's built-in scanner</li>
+          <li>Prompt-injection check: feed a CV containing an embedded instruction ("ignore previous instructions...") and confirm Claude treats it as inert text, per the Phase 2 sandboxing design</li>
+        </ul>
+        <h3 style="margin-top:22px;">Integration testing</h3>
+        <p>Specifically exercises the third-party seams: Claude API timeout/error handling, Supabase Storage upload/retrieval, Resend delivery, and the job-source ingestion job end-to-end.</p>
+      </article>
+
+      <article class="item" id="s-uat"><h3>User acceptance testing</h3>
+        <p>Before pilot launch, walk the Phase 1 MVP acceptance criteria as a literal checklist — ideally with one or two real test users, not just you. A solo builder can't self-test "does this actually make sense to someone who isn't me."</p>
+      </article>
+    </section>
+
+    <!-- SHIP & OPERATE -->
+    <section class="part" id="s-deploy">
+      <div class="part-eyebrow">Part E — Ship & Operate</div>
+      <h2 class="part-heading">Deploy, watch, launch, listen</h2>
+
+      <article class="item"><h3>Deployment workflow</h3>
+        <p>GitHub → Cloudflare Workers auto-deploy on merge to <code>main</code>; every PR gets its own preview URL. Supabase migrations apply via CLI before each deploy that changes the schema.</p>
+      </article>
+
+      <article class="item"><h3>Monitoring plan</h3>
+        <p>Sentry for errors, Cloudflare Web Analytics for traffic. Since there's no ops team, this needs to be a habit, not a dashboard nobody opens: a short weekly check of Claude API spend, Supabase usage %, error rate, and active user count.</p>
+      </article>
+
+      <article class="item" id="s-launch"><h3>Launch checklist</h3>
+        <ul class="checklist">
+          <li>All Phase 1 MVP acceptance criteria pass</li>
+          <li>Tested in English and Arabic, mobile and desktop</li>
+          <li>RLS cross-user access denial verified</li>
+          <li>Consent, export, and delete flows tested end-to-end</li>
+          <li>Sentry and usage monitoring live</li>
+          <li>Privacy Policy and Terms of Service published — real legal text, not this framework's privacy section</li>
+          <li>Domain and SSL live</li>
+          <li>AI rate limits configured per user</li>
+          <li>Supabase backups verified restorable</li>
+        </ul>
+      </article>
+
+      <article class="item" id="s-beta"><h3>Beta testing plan</h3>
+        <p>Invite 10–20 real users directly, not a public launch. Run for 2–4 weeks. Gather feedback through a short structured form plus a few scheduled calls — enough signal to decide the next iteration without needing a large sample.</p>
+        <h3 style="margin-top:22px;">Feedback plan</h3>
+        <p>In-app thumbs up/down on AI recommendations (per the Phase 1 analytics plan), a simple feedback email or form, and a weekly review of what's come in.</p>
+      </article>
+
+      <article class="item" id="s-post"><h3>Post-launch roadmap</h3>
+        <p><b>Month 4+:</b> expand job sources based on what the pilot actually needed, add application tracking and course recommendations, introduce the paid tier deferred in Phase 1 using real pilot pricing signal, evaluate native mobile only if pilot usage patterns justify it.</p>
+      </article>
+    </section>
+
+    <!-- ACCESS -->
+    <section class="part" id="s-access">
+      <div class="part-eyebrow">Before Sprint 1</div>
+      <h2 class="part-heading">Access I'll need — and why</h2>
+      <p class="part-intro">Nothing below gets requested until you say go. When you do, here's exactly what each one is for.</p>
+      <div class="table-wrap"><table>
+        <tr><th>Access</th><th>Why</th><th>Level</th><th>Data touched</th></tr>
+        <tr><td>GitHub repository</td><td>To create the repo and push code</td><td>Write access to a repo (new or existing org)</td><td>Code only, no user data</td></tr>
+        <tr><td>Cloudflare account</td><td>To provision Workers hosting and connect the domain</td><td>Standard account access, not billing unless you want to set spend limits together</td><td>Deployment config, DNS</td></tr>
+        <tr><td>Supabase account</td><td>To create the project (database, auth, storage)</td><td>Project owner, since this is a new project</td><td>None until real users sign up</td></tr>
+        <tr><td>Anthropic API key</td><td>To call Claude for extraction, interview, and coaching</td><td>A scoped API key, stored only as an environment variable, never in code</td><td>Whatever the app sends — no more than the product itself accesses</td></tr>
+      </table></div>
+      <p style="font-size:14px; color:var(--ink-soft); max-width:74ch;">No passwords change hands — GitHub and Cloudflare support inviting a collaborator directly, and Supabase/Anthropic keys are created as scoped credentials, not shared account logins.</p>
+    </section>
+
+    <footer class="doc-footer">Phase 5 draft — the last planning phase. Approve this and Sprint 1 can start whenever you're ready to grant the access above.</footer>
+  </main>
+</div>

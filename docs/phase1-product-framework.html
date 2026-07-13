@@ -1,0 +1,525 @@
+<title>AI Job Coach — Phase 1 Product Framework</title>
+<style>
+  :root{
+    --bg:#F5F6F2; --surface:#FFFFFF; --surface-2:#ECEFE9; --border:#DCE0D6;
+    --ink:#16211C; --ink-soft:#4B564E; --ink-faint:#7C8880;
+    --accent:#1F6E5C; --accent-ink:#0F3F34; --accent-soft:#E4EFE9;
+    --amber:#96692A; --amber-soft:#F3E7D2;
+    --risk:#8C3A29; --risk-soft:#F3E0DB;
+    --open:#4B5768; --open-soft:#E7E9EE;
+    --font-display:'Iowan Old Style','Source Serif Pro','Palatino Linotype',Georgia,ui-serif,serif;
+    --font-body:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+    --font-mono:ui-monospace,'Cascadia Code','SF Mono',Consolas,monospace;
+  }
+  @media (prefers-color-scheme:dark){
+    :root{
+      --bg:#10160F; --surface:#161F17; --surface-2:#1D2820; --border:#2A362C;
+      --ink:#E8ECE5; --ink-soft:#AEB8AC; --ink-faint:#7E8B80;
+      --accent:#57BC9F; --accent-ink:#BFEBDB; --accent-soft:#1B332A;
+      --amber:#D9A94F; --amber-soft:#332A16;
+      --risk:#DE8571; --risk-soft:#3A2620;
+      --open:#9AA6B4; --open-soft:#232C34;
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#10160F; --surface:#161F17; --surface-2:#1D2820; --border:#2A362C;
+    --ink:#E8ECE5; --ink-soft:#AEB8AC; --ink-faint:#7E8B80;
+    --accent:#57BC9F; --accent-ink:#BFEBDB; --accent-soft:#1B332A;
+    --amber:#D9A94F; --amber-soft:#332A16;
+    --risk:#DE8571; --risk-soft:#3A2620;
+    --open:#9AA6B4; --open-soft:#232C34;
+  }
+  :root[data-theme="light"]{
+    --bg:#F5F6F2; --surface:#FFFFFF; --surface-2:#ECEFE9; --border:#DCE0D6;
+    --ink:#16211C; --ink-soft:#4B564E; --ink-faint:#7C8880;
+    --accent:#1F6E5C; --accent-ink:#0F3F34; --accent-soft:#E4EFE9;
+    --amber:#96692A; --amber-soft:#F3E7D2;
+    --risk:#8C3A29; --risk-soft:#F3E0DB;
+    --open:#4B5768; --open-soft:#E7E9EE;
+  }
+
+  *{box-sizing:border-box;}
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font-family:var(--font-body); line-height:1.55; font-size:16px;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3{font-family:var(--font-display); text-wrap:balance; color:var(--ink); font-weight:600;}
+  a{color:var(--accent);}
+  .layout{display:grid; grid-template-columns:260px minmax(0,1fr); gap:0; max-width:1280px; margin:0 auto;}
+  @media (max-width:920px){ .layout{grid-template-columns:1fr;} }
+
+  /* TOC */
+  nav.toc{
+    position:sticky; top:0; align-self:start; height:100vh; overflow-y:auto;
+    padding:28px 18px 40px 28px; border-right:1px solid var(--border);
+    font-size:13.5px;
+  }
+  @media (max-width:920px){ nav.toc{position:relative; height:auto; border-right:none; border-bottom:1px solid var(--border); padding:20px 20px 8px;} }
+  nav.toc .eyebrow{font-family:var(--font-mono); letter-spacing:.08em; text-transform:uppercase; color:var(--ink-faint); font-size:11px; margin-bottom:14px;}
+  nav.toc ol{list-style:none; margin:0 0 18px; padding:0; counter-reset:part;}
+  nav.toc .part-title{font-family:var(--font-mono); text-transform:uppercase; letter-spacing:.06em; font-size:11px; color:var(--accent); margin:18px 0 6px;}
+  nav.toc .part-title:first-child{margin-top:0;}
+  nav.toc li a{
+    display:block; padding:3px 0; color:var(--ink-soft); text-decoration:none; border-radius:4px;
+  }
+  nav.toc li a:hover{color:var(--accent);}
+
+  main{padding:44px clamp(20px,4vw,64px) 100px;}
+  .col{max-width:70ch;}
+  header.hero{max-width:78ch; margin-bottom:44px;}
+  .eyebrow{font-family:var(--font-mono); letter-spacing:.08em; text-transform:uppercase; color:var(--accent); font-size:12px; margin-bottom:10px;}
+  h1.title{font-size:clamp(28px,4vw,40px); margin:0 0 14px; line-height:1.1;}
+  .subtitle{color:var(--ink-soft); font-size:17px; max-width:62ch; margin:0 0 18px;}
+  .meta{display:flex; gap:18px; flex-wrap:wrap; font-family:var(--font-mono); font-size:12.5px; color:var(--ink-faint); border-top:1px solid var(--border); padding-top:14px;}
+  .meta b{color:var(--ink-soft); font-weight:600;}
+
+  .callout{
+    background:var(--amber-soft); border:1px solid color-mix(in srgb, var(--amber) 35%, transparent);
+    border-left:3px solid var(--amber); border-radius:6px; padding:16px 20px; margin:36px 0;
+    max-width:70ch; font-size:15px;
+  }
+  .callout .cal-label{font-family:var(--font-mono); text-transform:uppercase; letter-spacing:.06em; font-size:11px; color:var(--amber); margin-bottom:6px; display:block;}
+
+  section.part{padding-top:56px; margin-top:-16px; border-top:1px solid var(--border);}
+  section.part:first-of-type{border-top:none;}
+  .part-eyebrow{font-family:var(--font-mono); text-transform:uppercase; letter-spacing:.08em; font-size:12px; color:var(--accent); margin-bottom:6px;}
+  .part-heading{font-size:26px; margin:0 0 30px;}
+
+  article.item{margin:0 0 30px; max-width:70ch;}
+  article.item h3{font-size:18px; margin:0 0 8px; display:flex; gap:10px; align-items:baseline;}
+  article.item h3 .num{font-family:var(--font-mono); color:var(--ink-faint); font-size:14px; font-weight:400;}
+  article.item p, article.item ul{margin:0; color:var(--ink-soft); font-size:15.5px;}
+  article.item ul{padding-left:20px;}
+  article.item li{margin-bottom:4px;}
+  article.item p + p{margin-top:8px;}
+  .persona{background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:14px 18px; margin-bottom:10px;}
+  .persona b{color:var(--ink);}
+
+  .tag{display:inline-block; font-family:var(--font-mono); font-size:11px; letter-spacing:.03em; text-transform:uppercase; padding:2px 8px; border-radius:20px; font-weight:600;}
+  .tag-confirmed{background:var(--accent-soft); color:var(--accent-ink);}
+  .tag-assumption{background:var(--amber-soft); color:var(--amber);}
+  .tag-open{background:var(--open-soft); color:var(--open);}
+  .tag-risk{background:var(--risk-soft); color:var(--risk);}
+
+  .table-wrap{overflow-x:auto; margin:14px 0 32px; border:1px solid var(--border); border-radius:8px; max-width:100%;}
+  table{border-collapse:collapse; width:100%; min-width:640px; font-size:14px; background:var(--surface);}
+  th,td{text-align:left; padding:10px 14px; border-bottom:1px solid var(--border); vertical-align:top;}
+  th{font-family:var(--font-mono); font-size:11px; text-transform:uppercase; letter-spacing:.05em; color:var(--ink-faint); background:var(--surface-2); font-weight:600;}
+  tr:last-child td{border-bottom:none;}
+  td.num, th.num{font-variant-numeric:tabular-nums;}
+
+  .assumption-list li{margin-bottom:10px;}
+  .roadmap-step{display:grid; grid-template-columns:120px 1fr; gap:16px; padding:14px 0; border-bottom:1px solid var(--border);}
+  .roadmap-step:last-child{border-bottom:none;}
+  .roadmap-step .when{font-family:var(--font-mono); font-size:12.5px; color:var(--accent); padding-top:2px;}
+
+  footer.doc-footer{max-width:70ch; margin-top:60px; padding-top:24px; border-top:1px solid var(--border); color:var(--ink-faint); font-size:13.5px;}
+
+  ::selection{background:var(--accent-soft); color:var(--accent-ink);}
+  a:focus-visible, button:focus-visible{outline:2px solid var(--accent); outline-offset:2px;}
+  @media (prefers-reduced-motion:reduce){ *{scroll-behavior:auto !important;} }
+  html{scroll-behavior:smooth;}
+</style>
+
+<div class="layout">
+  <nav class="toc">
+    <div class="eyebrow">On this page</div>
+    <ol>
+      <li class="part-title">Foundation</li>
+      <li><a href="#s1">1. Vision</a></li>
+      <li><a href="#s4">4. Target audience</a></li>
+      <li><a href="#s5">5–6. Personas</a></li>
+      <li><a href="#s9">9–10. Value & differentiators</a></li>
+      <li class="part-title">Scope</li>
+      <li><a href="#s12">12. Feature inventory</a></li>
+      <li><a href="#s13">13–15. MVP / post-MVP / excluded</a></li>
+      <li class="part-title">Requirements</li>
+      <li><a href="#s16">16–17. Functional / non-functional</a></li>
+      <li><a href="#s18">18–19. AI capabilities & limits</a></li>
+      <li class="part-title">Strategy</li>
+      <li><a href="#s21">21–23. Data, job, course strategy</a></li>
+      <li><a href="#s24">24–25. Profile & memory model</a></li>
+      <li class="part-title">Trust & governance</li>
+      <li><a href="#s26">26–30. Consent, safety, privacy</a></li>
+      <li class="part-title">Business</li>
+      <li><a href="#s31">31–34. Model, pricing, metrics</a></li>
+      <li class="part-title">Risk & planning</li>
+      <li><a href="#s35">35–36. Risk register</a></li>
+      <li><a href="#s37">37–38. Assumptions & open items</a></li>
+      <li><a href="#s39">39–40. Acceptance & roadmap</a></li>
+      <li class="part-title">Reference tables</li>
+      <li><a href="#t-priority">Feature priority matrix</a></li>
+      <li><a href="#t-moscow">MoSCoW</a></li>
+      <li><a href="#t-risk">Risk register</a></li>
+      <li><a href="#t-data">Data-source feasibility</a></li>
+      <li><a href="#t-integration">Integration feasibility</a></li>
+      <li><a href="#t-roles">Roles & permissions</a></li>
+      <li><a href="#t-glossary">Glossary</a></li>
+    </ol>
+  </nav>
+
+  <main>
+    <header class="hero">
+      <div class="eyebrow">Job Coach — Product Framework</div>
+      <h1 class="title">Phase 1: Product Framework</h1>
+      <p class="subtitle">A structured foundation for an AI career coach serving early- and mid-career professionals across the UAE and GCC — bilingual, privacy-first, and built to keep a hard line between a confirmed fact and a guess.</p>
+      <div class="meta">
+        <span><b>Status</b> Approved (amended 13 Jul 2026)</span>
+        <span><b>Date</b> 13 July 2026</span>
+        <span><b>Phase 0</b> Approved</span>
+        <span><b>Next</b> Phase 2 — Technical & AI Architecture</span>
+      </div>
+    </header>
+
+    <!-- PART A: FOUNDATION -->
+    <section class="part" id="s1">
+      <div class="part-eyebrow">Part A — Foundation</div>
+      <h2 class="part-heading">Vision, problem, and who this is for</h2>
+
+      <article class="item"><h3><span class="num">01</span> Product vision</h3>
+        <p>A trusted AI career companion for the UAE and GCC that helps early- and mid-career professionals understand their own value, close the gap to the roles they actually want, and apply with confidence — through a profile that keeps learning and a coach that explains itself.</p>
+      </article>
+
+      <article class="item"><h3><span class="num">02</span> Product mission</h3>
+        <p>Replace generic resume templates and stateless chatbot advice with career guidance grounded in each user's real, confirmed history — transparent about what it knows, what it's inferring, and what it still needs to ask.</p>
+      </article>
+
+      <article class="item"><h3><span class="num">03</span> Core problem statement</h3>
+        <p>Job seekers hunt across disconnected surfaces — CV, LinkedIn, job boards, generic AI tools, memory — none of which talk to each other. Generic AI writes generic resumes because it doesn't know the person. Job boards match on keywords, not fit. Rejection arrives with no explanation. Career advice, when it exists, isn't personalized and forgets last week's conversation.</p>
+      </article>
+
+      <article class="item" id="s4"><h3><span class="num">04</span> Target audience</h3>
+        <p>Early-career (0–3 yrs) and mid-career (4–15 yrs) professionals, actively searching or weighing a transition, based in or targeting roles across the UAE and wider GCC, working in English and/or Arabic, split across mobile and desktop.</p>
+      </article>
+
+      <article class="item" id="s5"><h3><span class="num">05</span> Primary personas</h3>
+        <div class="persona"><b>Ahmed, 24</b> — early-career engineer, Dubai. One internship, a degree that doesn't map cleanly to the job titles he sees posted, applying broadly with a low response rate. Doesn't know which resume gaps are actually disqualifying versus imagined.</div>
+        <div class="persona"><b>Fatima, 32</b> — mid-career marketing lead, Abu Dhabi, weighing a pivot toward product/digital marketing. Eight years of experience she struggles to reframe in a new field's vocabulary; family and location constraints narrow her options; wants a structured skills-gap view, not another generic "upskill" list.</div>
+      </article>
+
+      <article class="item"><h3><span class="num">06</span> Secondary personas</h3>
+        <ul>
+          <li>Career switcher leaving a contracting industry, retraining mid-search.</li>
+          <li>Professional returning after a career break, rebuilding confidence and a narrative for the gap.</li>
+          <li>Expat professional navigating visa sponsorship and work-authorization constraints as a hard filter on every search.</li>
+        </ul>
+      </article>
+
+      <article class="item"><h3><span class="num">07</span> Jobs to be done</h3>
+        <ul>
+          <li>"When I don't know what roles I'm actually qualified for, tell me honestly so I stop wasting applications."</li>
+          <li>"When I've been rejected repeatedly, help me understand why without guessing."</li>
+          <li>"When I update one part of my story, don't make me repeat the rest of it."</li>
+          <li>"When a job looks good on paper, tell me what I'm missing before I apply."</li>
+          <li>"When I don't know what to learn next, connect it to a role I actually want."</li>
+        </ul>
+      </article>
+
+      <article class="item"><h3><span class="num">08</span> User pain points</h3>
+        <p>Fragmented profile across platforms · generic AI-written resumes that overstate or invent · no visibility into why a match was suggested · repetitive, ungrounded interview questions from other tools · unclear which preference is actually blocking matches · course recommendations disconnected from a real target role · rejection without feedback · advice that ignores regional hiring norms.</p>
+      </article>
+
+      <article class="item" id="s9"><h3><span class="num">09</span> Value proposition</h3>
+        <p>One profile, built once and corrected as it grows, that a coach actually uses — not a chatbot that forgets every session, not a job board that only reads keywords. Every recommendation says which fact it's based on and what's still a guess.</p>
+      </article>
+
+      <article class="item"><h3><span class="num">10</span> Key differentiators</h3>
+        <ul>
+          <li>Persistent structured profile with fact/inference provenance, not a stateless chat window.</li>
+          <li>Explainable matching — every score comes with a reason and a gap list, not a black-box percentage.</li>
+          <li>UAE/GCC-first, bilingual EN/AR from day one, not a global product with translation bolted on.</li>
+          <li>Coach, profile, and job discovery share one data model, not three tools wearing one skin.</li>
+          <li>Hard rule against fabrication — nothing is invented that isn't in the profile.</li>
+        </ul>
+      </article>
+
+      <article class="item"><h3><span class="num">11</span> Core user journeys</h3>
+        <p>Onboarding & profile creation → guided career interview → first coach conversation and recommendation → browsing and saving job matches → <em>(post-MVP)</em> tailoring an application → ongoing check-ins as preferences and the market shift.</p>
+      </article>
+    </section>
+
+    <!-- PART B: SCOPE -->
+    <section class="part" id="s12">
+      <div class="part-eyebrow">Part B — Scope</div>
+      <h2 class="part-heading">What's in the MVP, what waits</h2>
+
+      <article class="item"><h3><span class="num">12</span> Feature inventory</h3>
+        <p>Full inventory with phase tagging is in the <a href="#t-priority">feature priority matrix</a> and <a href="#t-moscow">MoSCoW table</a> below.</p>
+      </article>
+
+      <article class="item" id="s13"><h3><span class="num">13</span> MVP features <span class="tag tag-confirmed">confirmed pillars</span></h3>
+        <p>Account creation & auth · CV/document upload with structured extraction · manual profile entry & correction · fact/inference/missing labeling · guided career interview (personalized, skippable, resumable) · AI career coach (conversational, explainable, cites profile data) · job discovery & matching from at least one feasible source · save/dismiss jobs · basic dashboard · consent controls, data export & delete · English + Arabic UI.</p>
+        <p><b>Everything in the MVP ships free.</b> No billing, payment processing, or tiering/usage-gating infrastructure is built for this release — that's a deliberate scope cut, not an oversight.</p>
+      </article>
+
+      <article class="item"><h3><span class="num">14</span> Post-MVP features</h3>
+        <p>Resume tailoring per job · cover letter drafting · application tracking & reminders · mock interviews · salary negotiation guidance · course/learning recommendations · networking & personal branding guidance · notifications · calendar integration · admin tooling · expanded job-source coverage · native mobile app · <b>paid subscription tier & billing infrastructure</b>.</p>
+      </article>
+
+      <article class="item"><h3><span class="num">15</span> Explicitly excluded from MVP</h3>
+        <p>Automatic application submission · autonomous outreach to recruiters or employers · any LinkedIn/Indeed integration beyond user-provided exports · paid course-marketplace integrations · native mobile apps · multi-role admin system.</p>
+      </article>
+    </section>
+
+    <!-- PART C: REQUIREMENTS -->
+    <section class="part" id="s16">
+      <div class="part-eyebrow">Part C — Requirements</div>
+      <h2 class="part-heading">What the system must do, and where AI stops</h2>
+
+      <article class="item"><h3><span class="num">16</span> Functional requirements</h3>
+        <ul>
+          <li>Auth & account management</li>
+          <li>Document upload & parsing into the profile schema</li>
+          <li>Profile CRUD with a correction interface</li>
+          <li>Consent toggles per data category</li>
+          <li>Conversational AI interface</li>
+          <li>Job listing display, save/dismiss, status tracking</li>
+          <li>Machine-readable data export and full account/data deletion</li>
+        </ul>
+      </article>
+
+      <article class="item"><h3><span class="num">17</span> Non-functional requirements</h3>
+        <p>Conversational, streaming-where-possible AI responses · stable at pilot scale (10–50 concurrent users) without a redesign · encryption in transit and at rest · UAE PDPL data-residency considered · WCAG 2.1 AA target · cost-aware AI usage with token budgets per tier.</p>
+      </article>
+
+      <article class="item" id="s18"><h3><span class="num">18</span> AI capabilities</h3>
+        <p>Document extraction & structuring · personalized interview question generation · coaching conversation grounded in stored profile data · job match scoring with plain-language explanation · skill-gap identification against a target role.</p>
+      </article>
+
+      <article class="item"><h3><span class="num">19</span> AI limitations</h3>
+        <p>Never invents qualifications, titles, employers, achievements, or numbers. Cannot guarantee an outcome. Cannot submit applications, message recruiters, or take any external action without explicit per-action confirmation. Cannot access a platform without an authorized integration or user-provided export. Not a licensed source of legal, immigration, or financial advice. Match quality is bounded by whatever job-source data actually exists — gaps are shown, never silently filled.</p>
+      </article>
+
+      <article class="item"><h3><span class="num">20</span> Data requirements</h3>
+        <p>Uploaded CV/resume files, certificates, portfolio/work samples · manually entered profile fields · interview answers · job interaction history · consent records with timestamps and versions.</p>
+      </article>
+    </section>
+
+    <!-- PART D: STRATEGY -->
+    <section class="part" id="s21">
+      <div class="part-eyebrow">Part D — Strategy</div>
+      <h2 class="part-heading">Where the data comes from, and how it's held</h2>
+
+      <article class="item"><h3><span class="num">21</span> Data-source strategy</h3>
+        <p>The user is the primary source of truth: uploads and manual entry first, a confirmation loop second. The system never scrapes. Licensed or official feeds are a secondary source, evaluated for cost and terms before use — never assumed available.</p>
+      </article>
+
+      <article class="item"><h3><span class="num">22</span> Job-discovery strategy</h3>
+        <p>Sequencing for MVP: <b>(1)</b> user-provided saved links for personal tracking — zero integration risk, works day one; <b>(2)</b> evaluate free-tier or low-cost licensed aggregator APIs feasible for the GCC region — a concrete build/buy decision for Phase 2; <b>(3)</b> official company career-page feeds where structured data exists. No unauthorized scraping of LinkedIn, Indeed, Bayt, GulfTalent, NaukriGulf, or Glassdoor, at any point.</p>
+      </article>
+
+      <article class="item"><h3><span class="num">23</span> Course-recommendation strategy <span class="tag tag-open">post-MVP</span></h3>
+        <p>Most learning platforms expose no public matching API. V1: a curated skill-gap → provider search-link mapping (linking out, not embedding), evolving to direct integration only where a provider offers acceptable terms.</p>
+      </article>
+
+      <article class="item" id="s24"><h3><span class="num">24</span> User-profile structure</h3>
+        <p>Identity & Contact · Employment History · Education · Certifications · Skills (technical/soft) · Achievements & Responsibilities · Career Preferences (title, industry, location, work model, hours, salary, visa/authorization, relocation, contract type) · Career Goals · Skill Gaps · AI-Inferred Notes (structurally separate from confirmed fields) · Interaction History.</p>
+      </article>
+
+      <article class="item"><h3><span class="num">25</span> AI memory model</h3>
+        <p>Four tiers: <b>Permanent Profile</b> (confirmed, user-approved facts) · <b>Preferences</b> (re-confirmed periodically — salary, location, visa status, availability, target roles, seniority, relocation) · <b>Session Context</b> (conversation-only, discarded unless promoted) · <b>Sensitive Data</b> (visa status, salary, personal constraints — flagged, minimal retention, explicit opt-in). Every field carries a provenance tag: <span class="tag tag-confirmed">Confirmed</span> <span class="tag tag-open">User-Stated</span> <span class="tag tag-assumption">AI-Inferred</span> <span class="tag tag-risk">Needs Verification</span></p>
+      </article>
+    </section>
+
+    <!-- PART E: TRUST -->
+    <section class="part" id="s26">
+      <div class="part-eyebrow">Part E — Trust & Governance</div>
+      <h2 class="part-heading">Consent, safety, privacy, and access</h2>
+
+      <article class="item"><h3><span class="num">26</span> Permissions & consent model</h3>
+        <p>Granular per-category opt-in · full visibility into what's stored · edit or delete any field · export the whole profile · consent is versioned and logged, never a one-time checkbox.</p>
+      </article>
+
+      <article class="item"><h3><span class="num">27</span> Trust & safety model</h3>
+        <p>Every recommendation cites the profile fact(s) behind it. No autonomous external action, ever, without explicit per-action confirmation — no auto-apply, no auto-send. Uploaded documents pass through a sandboxed pipeline with prompt-injection defenses: text extracted from a résumé is data, never an instruction to the assistant.</p>
+      </article>
+
+      <article class="item"><h3><span class="num">28</span> Privacy & security requirements</h3>
+        <p>Encryption in transit and at rest · least-privilege access to documents and profile data · defined retention and deletion windows · access and audit logging · data residency evaluated against UAE PDPL. This is a framework position, not legal advice — a compliance review is recommended before handling live user data, especially visa and salary fields.</p>
+      </article>
+
+      <article class="item"><h3><span class="num">29</span> Accessibility requirements</h3>
+        <p>WCAG 2.1 AA as the MVP target · full keyboard navigation · screen-reader-compatible forms, critical for the upload and correction flows · sufficient contrast in both themes · scalable text.</p>
+      </article>
+
+      <article class="item"><h3><span class="num">30</span> Localization requirements</h3>
+        <p>English and Arabic UI at launch · true RTL layout support, not mirrored icons · AI coaching content generated natively per language rather than machine-translated after the fact · AED and regional date formatting.</p>
+      </article>
+    </section>
+
+    <!-- PART F: BUSINESS -->
+    <section class="part" id="s31">
+      <div class="part-eyebrow">Part F — Business</div>
+      <h2 class="part-heading">Model, pricing, and how success is measured</h2>
+
+      <article class="item"><h3><span class="num">31</span> Business model options <span class="tag tag-confirmed">MVP: free, no monetization</span></h3>
+        <p>The first release ships entirely free — no billing surface, no gating. Monetization is deliberately deferred to the next release, once the pilot shows what people actually use. When it's introduced: <b>Freemium subscription</b> remains the recommended direction. <b>B2B2C</b> licensing to universities, career centers, or government employment programs is a strong long-term fit for the GCC market, worth exploring post-pilot. <b>Pure pay-per-feature</b> is not recommended — mismatched to an ongoing coaching relationship.</p>
+      </article>
+
+      <article class="item"><h3><span class="num">32</span> Pricing considerations <span class="tag tag-open">deferred to next release</span></h3>
+        <p>Not part of this release. Kept here only as a forward-looking reference so it doesn't need re-deriving later: comparable AI career tools price roughly <b>AED 35–75/month (~US$10–20)</b> for a paid tier. Actual pricing should be set from pilot usage and cost data, not from this estimate alone — revisit after the free pilot has run.</p>
+      </article>
+
+      <article class="item"><h3><span class="num">33</span> Success metrics</h3>
+        <p>Profile completion rate · career-interview completion rate · coach engagement (sessions/week, messages/session) · job-match save rate · self-reported "applied" and, longer-term, "landed a role" via periodic check-ins · free-to-paid conversion · retention/churn.</p>
+      </article>
+
+      <article class="item"><h3><span class="num">34</span> Product analytics</h3>
+        <p>Funnel drop-off through onboarding · feature usage by tier · thumbs-up/down on AI recommendations · AI cost per active user · job-source click-through — all behind the same consent model as everything else, nothing tracked silently.</p>
+      </article>
+    </section>
+
+    <!-- PART G: RISK -->
+    <section class="part" id="s35">
+      <div class="part-eyebrow">Part G — Risk & Planning</div>
+      <h2 class="part-heading">What could go wrong, and the path from here</h2>
+
+      <article class="item"><h3><span class="num">35–36</span> Key risks & mitigations</h3>
+        <p>Full register with likelihood and impact is in the <a href="#t-risk">risk register table</a> below. Headline risk: the 3-month solo timeline is achievable only if scope holds to the three confirmed MVP pillars.</p>
+      </article>
+
+      <article class="item" id="s37"><h3><span class="num">37</span> Assumptions <span class="tag tag-assumption">consolidated</span></h3>
+        <ul class="assumption-list">
+          <li>Pilot-stage Claude API cost of roughly $50–300/month for 10–50 active users, pending real usage telemetry — matters more now that there's no revenue offsetting it during the free pilot.</li>
+          <li>At least one GCC-relevant job source will be feasible at free or low cost — pending Phase 2 research, not guaranteed.</li>
+          <li>Even with no paid tier, usage limits (e.g. coach messages/month, CV parses) are still likely needed to keep AI cost bounded during the free pilot — sized once real usage data exists, not guessed now.</li>
+        </ul>
+      </article>
+
+      <article class="item" id="s38"><h3><span class="num">38</span> Open decisions <span class="tag tag-open">not blocking</span></h3>
+        <p>Product name, domain, and brand identity · exact usage limits for the free pilot · final job-source integration(s) · PDPL compliance review outcome · native app timing · when and how to introduce the paid tier for the next release.</p>
+      </article>
+
+      <article class="item"><h3>Change log</h3>
+        <div class="table-wrap"><table>
+          <tr><th>Date</th><th>Change</th></tr>
+          <tr><td class="num">13 Jul 2026</td><td>Phase 0 approved.</td></tr>
+          <tr><td class="num">13 Jul 2026</td><td>Phase 1 amended: (1) confirmed "UAE Boys Job Coach" is a folder name only, not the product name — audience and personas stand as gender-neutral, no further action; (2) MVP scope narrowed to free-only — no billing/tiering in this release, paid subscription moved fully to post-MVP; (3) platform sequencing confirmed as web-first (was a recommendation, now a decision).</td></tr>
+        </table></div>
+      </article>
+
+      <article class="item" id="s39"><h3><span class="num">39</span> MVP acceptance criteria</h3>
+        <p>A user can: register and log in · upload a CV and see it converted into a structured profile · correct any extracted field · complete a guided interview that skips what's already known · have a coach conversation and receive a recommendation naming the profile fact behind it · see job matches from at least one real source with a plain-language reason and save/dismiss action · export or delete their entire profile · use the product fully in English or Arabic.</p>
+      </article>
+
+      <article class="item" id="s40"><h3><span class="num">40</span> Recommended roadmap</h3>
+        <div class="roadmap-step"><div class="when">Weeks 1–4</div><div><b>Foundation</b> — auth, profile schema, CV upload & extraction, correction UI.</div></div>
+        <div class="roadmap-step"><div class="when">Weeks 5–8</div><div><b>Intelligence</b> — guided interview engine, AI coach conversation loop, fact/inference tagging.</div></div>
+        <div class="roadmap-step"><div class="when">Weeks 9–12</div><div><b>Discovery & pilot</b> — one job-source integration, save/dismiss + basic dashboard, ship to a small pilot group, start collecting real usage and cost data.</div></div>
+        <div class="roadmap-step"><div class="when">Month 4+</div><div><b>Iterate</b> — expand job sources, add application support and course recommendations, revisit native mobile.</div></div>
+        <p style="margin-top:14px;">This is aggressive but achievable for a solo, AI-assisted, non-technical founder <em>only</em> if scope holds to the three MVP pillars — profile creation, AI coach, job discovery/matching. Anything extra comes out of Month 4+, not out of the pillars.</p>
+      </article>
+    </section>
+
+    <!-- REFERENCE TABLES -->
+    <section class="part" id="t-priority">
+      <div class="part-eyebrow">Reference</div>
+      <h2 class="part-heading">Tables</h2>
+
+      <article class="item"><h3>Feature priority matrix</h3>
+        <div class="table-wrap"><table>
+          <tr><th>Feature</th><th>Impact</th><th>Effort</th><th>Priority</th></tr>
+          <tr><td>CV upload & structured extraction</td><td>High</td><td>Medium</td><td>P0</td></tr>
+          <tr><td>Guided career interview</td><td>High</td><td>Medium</td><td>P0</td></tr>
+          <tr><td>AI coach (explainable)</td><td>High</td><td>High</td><td>P0</td></tr>
+          <tr><td>Job discovery & matching (1 source)</td><td>High</td><td>High</td><td>P0</td></tr>
+          <tr><td>Fact / inference / consent model</td><td>High</td><td>Medium</td><td>P0</td></tr>
+          <tr><td>Basic dashboard</td><td>Medium</td><td>Low</td><td>P0</td></tr>
+          <tr><td>Resume tailoring</td><td>High</td><td>Medium</td><td>P1</td></tr>
+          <tr><td>Cover letter drafting</td><td>Medium</td><td>Low</td><td>P1</td></tr>
+          <tr><td>Application tracking</td><td>Medium</td><td>Medium</td><td>P1</td></tr>
+          <tr><td>Course recommendations</td><td>Medium</td><td>Medium</td><td>P1</td></tr>
+          <tr><td>Multi-source job aggregation</td><td>High</td><td>High</td><td>P1 (post-pilot)</td></tr>
+          <tr><td>Mock interviews</td><td>Medium</td><td>High</td><td>P2</td></tr>
+          <tr><td>Salary negotiation guidance</td><td>Low</td><td>Low</td><td>P2</td></tr>
+          <tr><td>Admin / back office</td><td>Low</td><td>Medium</td><td>P2</td></tr>
+          <tr><td>Native mobile app</td><td>Medium</td><td>High</td><td>P2</td></tr>
+        </table></div>
+      </article>
+
+      <article class="item" id="t-moscow"><h3>MoSCoW</h3>
+        <div class="table-wrap"><table>
+          <tr><th>Category</th><th>Items</th></tr>
+          <tr><td><span class="tag tag-confirmed">Must</span></td><td>Account & auth, CV upload/extraction, manual entry & correction, consent & export/delete, guided interview, AI coach with explainability, job matching (≥1 source), EN/AR UI</td></tr>
+          <tr><td><span class="tag tag-open">Should</span></td><td>Basic dashboard, save/dismiss job tracking, periodic preference re-confirmation</td></tr>
+          <tr><td><span class="tag tag-assumption">Could</span></td><td>Resume tailoring, cover letters, course recommendation links, notifications</td></tr>
+          <tr><td><span class="tag tag-risk">Won't (MVP)</span></td><td>Auto-apply, recruiter outreach automation, native app, admin panel, multi-source aggregation at scale, mock interviews</td></tr>
+        </table></div>
+      </article>
+
+      <article class="item" id="t-risk"><h3>Risk register</h3>
+        <div class="table-wrap"><table>
+          <tr><th>ID</th><th>Risk</th><th>Category</th><th>Likelihood</th><th>Impact</th><th>Mitigation</th></tr>
+          <tr><td class="num">R1</td><td>3-month solo timeline slips given full scope ambition</td><td>Schedule</td><td>High</td><td>High</td><td>Hold scope to 3 MVP pillars; push the rest to Month 4+</td></tr>
+          <tr><td class="num">R2</td><td>No free/affordable job-data source proves feasible for GCC</td><td>Data</td><td>Medium</td><td>High</td><td>Fallback to user-saved links; research licensed options early in Phase 2</td></tr>
+          <tr><td class="num">R3</td><td>AI hallucinated fact damages user trust</td><td>Trust</td><td>Medium</td><td>High</td><td>Hard grounding rule + citation requirement + correction loop</td></tr>
+          <tr><td class="num">R4</td><td>Claude API cost scales faster than free-tier economics allow</td><td>Cost</td><td>Medium</td><td>Medium</td><td>Cap free tier; avoid per-listing LLM calls (cheaper pre-filtering for matching)</td></tr>
+          <tr><td class="num">R5</td><td>PDPL/privacy compliance gap found post-launch</td><td>Legal</td><td>Medium</td><td>High</td><td>Compliance review before handling live sensitive data (visa, salary)</td></tr>
+          <tr><td class="num">R6</td><td>Low free-to-paid conversion</td><td>Business</td><td>Medium</td><td>Medium</td><td>Validate pricing with the pilot cohort before wide launch</td></tr>
+          <tr><td class="num">R7</td><td>Arabic content quality lags English (UI + AI output)</td><td>Quality</td><td>Medium</td><td>Medium</td><td>Native-language generation, not literal translation; bilingual review pre-launch</td></tr>
+          <tr><td class="num">R8</td><td>Solo-founder bus factor, no technical backup</td><td>Operational</td><td>Low</td><td>High</td><td>Keep code in GitHub with clear docs; consider a technical advisor before scaling</td></tr>
+        </table></div>
+      </article>
+
+      <article class="item" id="t-data"><h3>Data-source feasibility</h3>
+        <div class="table-wrap"><table>
+          <tr><th>Source</th><th>Status</th><th>Note</th></tr>
+          <tr><td>LinkedIn Jobs</td><td><span class="tag tag-risk">Not recommended</span></td><td>No public API; ToS-restricted. User-provided exports only.</td></tr>
+          <tr><td>Indeed</td><td><span class="tag tag-risk">Restricted</span></td><td>No scraping; explore publisher-API eligibility.</td></tr>
+          <tr><td>Bayt</td><td><span class="tag tag-assumption">Uncertain</span></td><td>Research regional partner/API access in Phase 2.</td></tr>
+          <tr><td>GulfTalent</td><td><span class="tag tag-assumption">Uncertain</span></td><td>Research regional partner/API access in Phase 2.</td></tr>
+          <tr><td>NaukriGulf</td><td><span class="tag tag-assumption">Uncertain</span></td><td>Research regional partner/API access in Phase 2.</td></tr>
+          <tr><td>Glassdoor</td><td><span class="tag tag-risk">Restricted</span></td><td>Not planned for MVP.</td></tr>
+          <tr><td>Government job portals</td><td><span class="tag tag-open">Manual workflow</span></td><td>Often public; feasibility varies by portal.</td></tr>
+          <tr><td>Official company career pages</td><td><span class="tag tag-confirmed">Supported</span></td><td>Best low-risk source for MVP, where RSS/structured feeds exist.</td></tr>
+          <tr><td>Recruitment agency sites</td><td><span class="tag tag-open">Manual workflow</span></td><td>Case-by-case, not systematic for MVP.</td></tr>
+          <tr><td>Remote job platforms</td><td><span class="tag tag-assumption">Mixed</span></td><td>Some offer public APIs; evaluate individually in Phase 2.</td></tr>
+          <tr><td>User-provided links/exports</td><td><span class="tag tag-confirmed">Supported</span></td><td>Always available, zero integration risk.</td></tr>
+        </table></div>
+      </article>
+
+      <article class="item" id="t-integration"><h3>Integration feasibility <span style="font-weight:400;font-size:13px;color:var(--ink-faint);">(strategic — tool selection is Phase 2)</span></h3>
+        <div class="table-wrap"><table>
+          <tr><th>Category</th><th>Example</th><th>Status</th></tr>
+          <tr><td>Job data</td><td>Licensed aggregator API</td><td><span class="tag tag-assumption">Requires commercial access</span> — scoped in Phase 2</td></tr>
+          <tr><td>Job data</td><td>Official career-page feeds</td><td><span class="tag tag-confirmed">Supported where available</span></td></tr>
+          <tr><td>Course data</td><td>Coursera, edX, Udemy, LinkedIn Learning</td><td><span class="tag tag-open">Link-out for v1</span> — no public matching API</td></tr>
+          <tr><td>AI</td><td>Claude API</td><td><span class="tag tag-confirmed">Supported</span> — primary intelligence layer</td></tr>
+          <tr><td>Auth</td><td>Third-party auth provider</td><td><span class="tag tag-confirmed">Standard, low risk</span> — evaluated in Phase 2</td></tr>
+          <tr><td>Email</td><td>Transactional email provider</td><td><span class="tag tag-confirmed">Standard, low risk</span></td></tr>
+          <tr><td>Calendar</td><td>Google Calendar</td><td><span class="tag tag-open">Post-MVP</span> — standard OAuth</td></tr>
+        </table></div>
+      </article>
+
+      <article class="item" id="t-roles"><h3>Roles & permissions</h3>
+        <div class="table-wrap"><table>
+          <tr><th>Role</th><th>Can</th><th>Cannot</th></tr>
+          <tr><td>End user</td><td>Manage own profile, chat with coach, view/save/dismiss jobs, export/delete own data, control consent per category</td><td>Access other users' data; trigger any external action without per-action confirmation</td></tr>
+          <tr><td>AI agent (Claude)</td><td>Read consented profile data, generate grounded recommendations, ask clarifying questions, flag missing/uncertain info</td><td>Invent facts; take autonomous external action; access data outside granted consent scope</td></tr>
+          <tr><td>Admin <span style="color:var(--ink-faint);">(post-MVP)</span></td><td>View aggregate/anonymized usage, moderate reported listings, manage integration health</td><td>Access individual user profile content without cause and an audit trail</td></tr>
+        </table></div>
+      </article>
+
+      <article class="item" id="t-glossary"><h3>Product glossary</h3>
+        <div class="table-wrap"><table>
+          <tr><th>Term</th><th>Definition</th></tr>
+          <tr><td>Career Profile</td><td>The structured record of a user's history, skills, and preferences — distinct from a raw résumé.</td></tr>
+          <tr><td>Confirmed Fact</td><td>Profile information the user has explicitly verified.</td></tr>
+          <tr><td>AI-Inferred Note</td><td>A system-generated interpretation, not yet confirmed, always shown separately from confirmed fields.</td></tr>
+          <tr><td>Provenance Tag</td><td>The label — Confirmed / User-Stated / AI-Inferred / Missing / Needs Verification — attached to every profile field.</td></tr>
+          <tr><td>Match Score</td><td>The system's explainable estimate of fit between a user and a job listing.</td></tr>
+          <tr><td>Guided Career Interview</td><td>The personalized, skippable question flow used to fill profile gaps.</td></tr>
+          <tr><td>MVP</td><td>Minimum Viable Product — the smallest complete version worth releasing to real users.</td></tr>
+          <tr><td>MoSCoW</td><td>Prioritization method: Must / Should / Could / Won't have.</td></tr>
+          <tr><td>PDPL</td><td>UAE Personal Data Protection Law.</td></tr>
+          <tr><td>B2B2C</td><td>A business model selling through an intermediary (e.g. a university) to reach the end user.</td></tr>
+        </table></div>
+      </article>
+    </section>
+
+    <footer class="doc-footer">
+      Phase 1 draft — awaiting your approval before Phase 2 (Technical & AI Architecture) begins. Nothing here is final: items tagged <span class="tag tag-assumption">assumption</span> are flagged for later confirmation and won't be re-asked until you have real data to weigh them against.
+    </footer>
+  </main>
+</div>

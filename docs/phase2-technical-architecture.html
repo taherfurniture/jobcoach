@@ -1,0 +1,494 @@
+<title>AI Job Coach — Phase 2 Technical & AI Architecture</title>
+<style>
+  :root{
+    --bg:#F5F6F2; --surface:#FFFFFF; --surface-2:#ECEFE9; --border:#DCE0D6;
+    --ink:#16211C; --ink-soft:#4B564E; --ink-faint:#7C8880;
+    --accent:#1F6E5C; --accent-ink:#0F3F34; --accent-soft:#E4EFE9;
+    --amber:#96692A; --amber-soft:#F3E7D2;
+    --risk:#8C3A29; --risk-soft:#F3E0DB;
+    --open:#4B5768; --open-soft:#E7E9EE;
+    --wire:#B9C3B4;
+    --font-display:'Iowan Old Style','Source Serif Pro','Palatino Linotype',Georgia,ui-serif,serif;
+    --font-body:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+    --font-mono:ui-monospace,'Cascadia Code','SF Mono',Consolas,monospace;
+  }
+  @media (prefers-color-scheme:dark){
+    :root{
+      --bg:#10160F; --surface:#161F17; --surface-2:#1D2820; --border:#2A362C;
+      --ink:#E8ECE5; --ink-soft:#AEB8AC; --ink-faint:#7E8B80;
+      --accent:#57BC9F; --accent-ink:#BFEBDB; --accent-soft:#1B332A;
+      --amber:#D9A94F; --amber-soft:#332A16;
+      --risk:#DE8571; --risk-soft:#3A2620;
+      --open:#9AA6B4; --open-soft:#232C34;
+      --wire:#3A473D;
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#10160F; --surface:#161F17; --surface-2:#1D2820; --border:#2A362C;
+    --ink:#E8ECE5; --ink-soft:#AEB8AC; --ink-faint:#7E8B80;
+    --accent:#57BC9F; --accent-ink:#BFEBDB; --accent-soft:#1B332A;
+    --amber:#D9A94F; --amber-soft:#332A16;
+    --risk:#DE8571; --risk-soft:#3A2620;
+    --open:#9AA6B4; --open-soft:#232C34;
+    --wire:#3A473D;
+  }
+  :root[data-theme="light"]{
+    --bg:#F5F6F2; --surface:#FFFFFF; --surface-2:#ECEFE9; --border:#DCE0D6;
+    --ink:#16211C; --ink-soft:#4B564E; --ink-faint:#7C8880;
+    --accent:#1F6E5C; --accent-ink:#0F3F34; --accent-soft:#E4EFE9;
+    --amber:#96692A; --amber-soft:#F3E7D2;
+    --risk:#8C3A29; --risk-soft:#F3E0DB;
+    --open:#4B5768; --open-soft:#E7E9EE;
+    --wire:#B9C3B4;
+  }
+
+  *{box-sizing:border-box;}
+  body{margin:0; background:var(--bg); color:var(--ink); font-family:var(--font-body); line-height:1.55; font-size:16px; -webkit-font-smoothing:antialiased;}
+  h1,h2,h3{font-family:var(--font-display); text-wrap:balance; color:var(--ink); font-weight:600;}
+  a{color:var(--accent);}
+  .layout{display:grid; grid-template-columns:260px minmax(0,1fr); gap:0; max-width:1320px; margin:0 auto;}
+  @media (max-width:920px){ .layout{grid-template-columns:1fr;} }
+
+  nav.toc{position:sticky; top:0; align-self:start; height:100vh; overflow-y:auto; padding:28px 18px 40px 28px; border-right:1px solid var(--border); font-size:13.5px;}
+  @media (max-width:920px){ nav.toc{position:relative; height:auto; border-right:none; border-bottom:1px solid var(--border); padding:20px 20px 8px;} }
+  nav.toc .eyebrow{font-family:var(--font-mono); letter-spacing:.08em; text-transform:uppercase; color:var(--ink-faint); font-size:11px; margin-bottom:14px;}
+  nav.toc ol{list-style:none; margin:0 0 18px; padding:0;}
+  nav.toc .part-title{font-family:var(--font-mono); text-transform:uppercase; letter-spacing:.06em; font-size:11px; color:var(--accent); margin:18px 0 6px;}
+  nav.toc .part-title:first-child{margin-top:0;}
+  nav.toc li a{display:block; padding:3px 0; color:var(--ink-soft); text-decoration:none;}
+  nav.toc li a:hover{color:var(--accent);}
+
+  main{padding:44px clamp(20px,4vw,64px) 100px;}
+  header.hero{max-width:80ch; margin-bottom:36px;}
+  .eyebrow{font-family:var(--font-mono); letter-spacing:.08em; text-transform:uppercase; color:var(--accent); font-size:12px; margin-bottom:10px;}
+  h1.title{font-size:clamp(28px,4vw,40px); margin:0 0 14px; line-height:1.1;}
+  .subtitle{color:var(--ink-soft); font-size:17px; max-width:64ch; margin:0 0 18px;}
+  .meta{display:flex; gap:18px; flex-wrap:wrap; font-family:var(--font-mono); font-size:12.5px; color:var(--ink-faint); border-top:1px solid var(--border); padding-top:14px;}
+  .meta b{color:var(--ink-soft); font-weight:600;}
+
+  .callout{background:var(--amber-soft); border:1px solid color-mix(in srgb, var(--amber) 35%, transparent); border-left:3px solid var(--amber); border-radius:6px; padding:16px 20px; margin:28px 0; max-width:74ch; font-size:15px;}
+  .callout .cal-label{font-family:var(--font-mono); text-transform:uppercase; letter-spacing:.06em; font-size:11px; color:var(--amber); margin-bottom:6px; display:block;}
+
+  section.part{padding-top:56px; margin-top:-16px; border-top:1px solid var(--border);}
+  section.part:first-of-type{border-top:none;}
+  .part-eyebrow{font-family:var(--font-mono); text-transform:uppercase; letter-spacing:.08em; font-size:12px; color:var(--accent); margin-bottom:6px;}
+  .part-heading{font-size:26px; margin:0 0 12px;}
+  .part-intro{color:var(--ink-soft); max-width:72ch; margin:0 0 28px; font-size:15.5px;}
+
+  article.item{margin:0 0 34px; max-width:76ch;}
+  article.item h3{font-size:18px; margin:0 0 8px;}
+  article.item p, article.item ul{margin:0; color:var(--ink-soft); font-size:15.5px;}
+  article.item ul{padding-left:20px;}
+  article.item li{margin-bottom:4px;}
+  article.item p + p{margin-top:8px;}
+
+  .tag{display:inline-block; font-family:var(--font-mono); font-size:11px; letter-spacing:.03em; text-transform:uppercase; padding:2px 8px; border-radius:20px; font-weight:600;}
+  .tag-confirmed{background:var(--accent-soft); color:var(--accent-ink);}
+  .tag-assumption{background:var(--amber-soft); color:var(--amber);}
+  .tag-open{background:var(--open-soft); color:var(--open);}
+  .tag-risk{background:var(--risk-soft); color:var(--risk);}
+
+  .table-wrap{overflow-x:auto; margin:14px 0 32px; border:1px solid var(--border); border-radius:8px; max-width:100%;}
+  table{border-collapse:collapse; width:100%; min-width:680px; font-size:14px; background:var(--surface);}
+  th,td{text-align:left; padding:10px 14px; border-bottom:1px solid var(--border); vertical-align:top;}
+  th{font-family:var(--font-mono); font-size:11px; text-transform:uppercase; letter-spacing:.05em; color:var(--ink-faint); background:var(--surface-2); font-weight:600;}
+  tr:last-child td{border-bottom:none;}
+  td.num{font-variant-numeric:tabular-nums;}
+  code{font-family:var(--font-mono); font-size:13px; background:var(--surface-2); padding:1px 6px; border-radius:4px;}
+
+  /* Flow diagrams */
+  .diagram{background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:24px; margin:14px 0 34px; overflow-x:auto;}
+  .flow{display:flex; align-items:center; gap:0; min-width:max-content; padding:6px 0;}
+  .flow-node{background:var(--surface-2); border:1px solid var(--border); border-radius:8px; padding:12px 16px; min-width:130px; text-align:center; font-size:13px; line-height:1.35;}
+  .flow-node .fn-title{font-weight:600; color:var(--ink); display:block;}
+  .flow-node .fn-sub{color:var(--ink-faint); font-size:11px; font-family:var(--font-mono); display:block; margin-top:3px;}
+  .flow-node.accent{background:var(--accent-soft); border-color:color-mix(in srgb, var(--accent) 40%, transparent);}
+  .flow-node.risk{background:var(--risk-soft); border-color:color-mix(in srgb, var(--risk) 40%, transparent);}
+  .flow-arrow{width:34px; height:2px; background:var(--wire); position:relative; flex-shrink:0;}
+  .flow-arrow::after{content:""; position:absolute; right:0; top:50%; transform:translateY(-50%); border-style:solid; border-width:4px 0 4px 7px; border-color:transparent transparent transparent var(--wire);}
+  .flow-col{display:flex; flex-direction:column; align-items:center; gap:0;}
+  .flow-arrow-down{width:2px; height:24px; background:var(--wire); position:relative;}
+  .flow-arrow-down::after{content:""; position:absolute; bottom:0; left:50%; transform:translateX(-50%); border-style:solid; border-width:7px 4px 0 4px; border-color:var(--wire) transparent transparent transparent;}
+  .diagram-caption{font-size:12.5px; color:var(--ink-faint); margin-top:14px; font-family:var(--font-mono);}
+
+  .boundary-row{display:flex; gap:14px; flex-wrap:wrap; margin:14px 0 8px;}
+  .boundary{border:1.5px dashed var(--border); border-radius:10px; padding:16px; flex:1; min-width:200px;}
+  .boundary .b-label{font-family:var(--font-mono); font-size:11px; text-transform:uppercase; letter-spacing:.05em; color:var(--ink-faint); margin-bottom:10px; display:block;}
+  .boundary .flow-node{width:100%; margin-bottom:8px;}
+  .boundary .flow-node:last-child{margin-bottom:0;}
+
+  details.mermaid-src{margin-top:10px;}
+  details.mermaid-src summary{cursor:pointer; font-family:var(--font-mono); font-size:12px; color:var(--ink-faint); text-transform:uppercase; letter-spacing:.04em;}
+  details.mermaid-src pre{background:var(--surface-2); border:1px solid var(--border); border-radius:6px; padding:14px; overflow-x:auto; font-size:12.5px; margin-top:8px;}
+
+  .cost-total{background:var(--accent-soft); border:1px solid color-mix(in srgb, var(--accent) 35%, transparent); border-radius:8px; padding:16px 20px; margin-top:6px; max-width:76ch;}
+  .cost-total b{color:var(--accent-ink); font-size:17px;}
+
+  footer.doc-footer{max-width:76ch; margin-top:60px; padding-top:24px; border-top:1px solid var(--border); color:var(--ink-faint); font-size:13.5px;}
+  ::selection{background:var(--accent-soft); color:var(--accent-ink);}
+  a:focus-visible{outline:2px solid var(--accent); outline-offset:2px;}
+  @media (prefers-reduced-motion:reduce){ *{scroll-behavior:auto !important;} }
+  html{scroll-behavior:smooth;}
+</style>
+
+<div class="layout">
+  <nav class="toc">
+    <div class="eyebrow">On this page</div>
+    <ol>
+      <li class="part-title">Stack</li>
+      <li><a href="#s-decision">Stack decision, needs confirmation</a></li>
+      <li><a href="#s-table">Component-by-component rationale</a></li>
+      <li class="part-title">Diagrams</li>
+      <li><a href="#d-system">System architecture</a></li>
+      <li><a href="#d-doc">Document processing flow</a></li>
+      <li><a href="#d-ai">AI request flow</a></li>
+      <li><a href="#d-job">Job ingestion flow</a></li>
+      <li><a href="#d-profile">Profile update flow</a></li>
+      <li><a href="#d-security">Security boundary</a></li>
+      <li class="part-title">Data layer</li>
+      <li><a href="#s-schema">Draft database schema</a></li>
+      <li><a href="#s-api">API endpoint plan</a></li>
+      <li><a href="#s-jobs">Background jobs</a></li>
+      <li class="part-title">Reliability</li>
+      <li><a href="#s-errors">Error handling strategy</a></li>
+      <li><a href="#s-eval">AI evaluation plan</a></li>
+      <li class="part-title">Environments</li>
+      <li><a href="#s-dev">Dev environment</a></li>
+      <li><a href="#s-deploy">Deployment & backups</a></li>
+      <li class="part-title">Cost & risk</li>
+      <li><a href="#s-cost">MVP infrastructure cost</a></li>
+      <li><a href="#s-risk">Technical risks</a></li>
+    </ol>
+  </nav>
+
+  <main>
+    <header class="hero">
+      <div class="eyebrow">Job Coach — Technical & AI Architecture</div>
+      <h1 class="title">Phase 2: Technical & AI Architecture</h1>
+      <p class="subtitle">A stack optimized for one non-technical founder building with AI assistance on a 3-month timeline — fewest moving parts, managed services over hand-rolled infrastructure, and a hard boundary around what Claude is allowed to do autonomously.</p>
+      <div class="meta">
+        <span><b>Status</b> Approved (amended — Cloudflare hosting)</span>
+        <span><b>Optimizing for</b> Easiest to build & maintain</span>
+        <span><b>Phase 1</b> Approved</span>
+        <span><b>Next</b> Phase 3 — Information Architecture & UX</span>
+      </div>
+    </header>
+
+    <!-- STACK -->
+    <section class="part" id="s-decision">
+      <div class="part-eyebrow">Part A — Stack</div>
+      <h2 class="part-heading">The recommendation, and one place it disagrees with you</h2>
+      <p class="part-intro">Everything below is chosen against a single test: can I (Claude Code) build and keep this running correctly without you ever needing to write or debug code yourself. That test consistently favors a small number of managed platforms over best-of-breed pieces stitched together.</p>
+
+      <div class="callout">
+        <span class="cal-label">Resolved — hosting confirmed on Cloudflare</span>
+        The app deploys to <b>Cloudflare Workers</b> via the OpenNext Cloudflare adapter for Next.js, not Vercel. That adapter is actively maintained but younger than Vercel's native support — budget a little early buffer on first deploy to work through the handful of Node-API or streaming-edge-case issues that commonly show up in a Next.js-on-Cloudflare migration; this framework flags it once here so it isn't a surprise mid-build, not something to keep re-raising. One upside worth noting: hosting, domain, DNS, and CDN now all sit on one Cloudflare account instead of two vendors.
+      </div>
+
+      <article class="item" id="s-table"><h3>Component-by-component rationale</h3>
+        <div class="table-wrap"><table>
+          <tr><th>Component</th><th>Choice</th><th>Why it fits</th><th>Trade-off</th><th>Alternative(s) considered</th></tr>
+          <tr><td>App framework</td><td><b>Next.js</b> (React, TypeScript)</td><td>One codebase for UI and backend API routes; the framework Claude Code has the deepest, most current training on — fewer novel mistakes.</td><td>React has a learning curve if you ever want to read the code yourself; not a concern for AI-assisted building.</td><td>Remix, SvelteKit — both fine, less ecosystem depth</td></tr>
+          <tr><td>Hosting</td><td><b>Cloudflare Workers</b> (OpenNext adapter)</td><td>Confirmed per your preference — GitHub-connected deploys, preview URLs per branch, and hosting/domain/DNS/CDN on one account.</td><td>Adapter is younger than Vercel's native support; budget early buffer for first-deploy friction on a few Node APIs.</td><td>Vercel (simpler adapter story, second vendor), Netlify</td></tr>
+          <tr><td>Database + Auth + Storage</td><td><b>Supabase</b> (Postgres + Auth + Storage + pgvector)</td><td>One vendor, one dashboard, one bill instead of four separate services. Row Level Security enforces "a user can only ever touch their own data" at the database layer — a safety net that doesn't depend on backend code being bug-free.</td><td>Slightly less flexible than assembling best-of-breed pieces individually.</td><td>Firebase (weaker relational modeling for this schema), separate Postgres + Auth0 + S3 (more moving parts)</td></tr>
+          <tr><td>AI</td><td><b>Claude API</b> (Anthropic), server-side only</td><td>Primary intelligence layer per your original brief; native PDF/document understanding removes the need for a separate OCR pipeline for most CVs.</td><td>Largest variable cost in the stack — see cost section.</td><td>n/a — confirmed choice</td></tr>
+          <tr><td>Agent orchestration</td><td>Direct Anthropic SDK calls, one purpose-built function per task (extract, interview, coach, score)</td><td>Fewer abstractions between you and a bug when something breaks; a general agent framework (LangChain-style) adds debugging surface a solo non-technical founder doesn't need yet.</td><td>Less reusable if the product later needs many chained autonomous steps.</td><td>LangChain, custom agent framework</td></tr>
+          <tr><td>Document parsing</td><td>Claude native PDF input; <code>mammoth.js</code> for .docx-to-text pre-step</td><td>Skips building a separate OCR/extraction service for MVP.</td><td>Scanned/image-only PDFs extract poorly — flagged as an edge case, not solved in MVP.</td><td>Dedicated OCR service (Textract, Google Document AI) — deferred to post-MVP if needed</td></tr>
+          <tr><td>Long-term memory</td><td>Structured Postgres rows with provenance tags</td><td>Profile facts need correctness, not semantic search — a relational table is simpler and more auditable than a vector store for this data.</td><td>None significant at this scale.</td><td>Vector-only memory store — unnecessary for structured facts</td></tr>
+          <tr><td>Job matching (MVP)</td><td>Per-job Claude scoring call against the profile</td><td>Feasible at MVP's small, curated job volume; no vector DB tuning needed yet.</td><td>Doesn't scale cheaply to thousands of listings — revisit with pgvector (already in Supabase) when volume grows.</td><td>pgvector embeddings + rerank — deferred until job volume justifies it</td></tr>
+          <tr><td>Email</td><td><b>Resend</b></td><td>Simple API, generous free tier, clean Next.js integration for account verification.</td><td>None at this scale.</td><td>SendGrid — more setup overhead for the same result</td></tr>
+          <tr><td>Error tracking</td><td><b>Sentry</b> (free tier)</td><td>Surfaces production crashes proactively instead of you finding out from a user complaint.</td><td>None at this scale.</td><td>Cloudflare Workers logs alone — reactive, not proactive</td></tr>
+          <tr><td>Analytics</td><td>Custom events in Postgres + Cloudflare Web Analytics for pageviews</td><td>Free, privacy-respecting, and already included on the same Cloudflare account — no new vendor.</td><td>Less powerful than a dedicated product-analytics platform (e.g. PostHog) — fine to add later.</td><td>PostHog, Mixpanel — deferred</td></tr>
+        </table></div>
+      </article>
+    </section>
+
+    <!-- DIAGRAMS -->
+    <section class="part" id="d-system">
+      <div class="part-eyebrow">Part B — Diagrams</div>
+      <h2 class="part-heading">How the pieces talk to each other</h2>
+      <p class="part-intro">Rendered here as flow diagrams; each also includes its Mermaid source in a collapsed block so it can be pasted into GitHub docs later without redrawing anything.</p>
+
+      <article class="item"><h3>System architecture</h3>
+        <div class="diagram">
+          <div class="flow">
+            <div class="flow-node"><span class="fn-title">Browser</span><span class="fn-sub">Next.js UI · EN/AR</span></div>
+            <div class="flow-arrow"></div>
+            <div class="flow-node accent"><span class="fn-title">Cloudflare Workers</span><span class="fn-sub">Next.js app + API routes</span></div>
+            <div class="flow-arrow"></div>
+            <div class="flow-node"><span class="fn-title">Supabase</span><span class="fn-sub">Postgres · Auth · Storage</span></div>
+          </div>
+          <div class="flow" style="margin-top:16px;">
+            <div class="flow-node" style="visibility:hidden;"><span class="fn-title">spacer</span></div>
+            <div class="flow-arrow" style="visibility:hidden;"></div>
+            <div class="flow-node accent"><span class="fn-title">Cloudflare Workers</span><span class="fn-sub">server-side only</span></div>
+            <div class="flow-arrow"></div>
+            <div class="flow-node"><span class="fn-title">Claude API</span><span class="fn-sub">Anthropic</span></div>
+          </div>
+          <div class="flow" style="margin-top:16px;">
+            <div class="flow-node" style="visibility:hidden;"><span class="fn-title">spacer</span></div>
+            <div class="flow-arrow" style="visibility:hidden;"></div>
+            <div class="flow-node"><span class="fn-title">Resend</span><span class="fn-sub">transactional email</span></div>
+          </div>
+          <div class="diagram-caption">The client never talks to Supabase's service role or the Claude API directly — every privileged call is proxied through a Cloudflare Worker route.</div>
+          <details class="mermaid-src"><summary>Mermaid source</summary><pre>graph LR
+  Browser -->|HTTPS| CF[Cloudflare Workers: Next.js app + API routes]
+  CF --> Supabase[(Supabase: Postgres, Auth, Storage)]
+  CF --> Claude[Claude API]
+  CF --> Resend[Resend: email]</pre></details>
+        </div>
+      </article>
+
+      <article class="item" id="d-doc"><h3>Document processing flow</h3>
+        <div class="diagram">
+          <div class="flow">
+            <div class="flow-node"><span class="fn-title">CV / certificate upload</span></div>
+            <div class="flow-arrow"></div>
+            <div class="flow-node"><span class="fn-title">Supabase Storage</span><span class="fn-sub">file saved</span></div>
+            <div class="flow-arrow"></div>
+            <div class="flow-node accent"><span class="fn-title">Claude</span><span class="fn-sub">extract & structure</span></div>
+            <div class="flow-arrow"></div>
+            <div class="flow-node"><span class="fn-title">Provenance tagging</span><span class="fn-sub">Confirmed / Inferred / Missing</span></div>
+            <div class="flow-arrow"></div>
+            <div class="flow-node"><span class="fn-title">User review screen</span><span class="fn-sub">correct or confirm</span></div>
+            <div class="flow-arrow"></div>
+            <div class="flow-node accent"><span class="fn-title">Profile updated</span></div>
+          </div>
+          <div class="diagram-caption">Nothing reaches the permanent profile without passing through the user review step — extraction output is provisional until confirmed.</div>
+          <details class="mermaid-src"><summary>Mermaid source</summary><pre>graph LR
+  Upload --> Storage[Supabase Storage]
+  Storage --> Extract[Claude: extract & structure]
+  Extract --> Tag[Provenance tagging]
+  Tag --> Review[User review screen]
+  Review --> Profile[(Profile updated)]</pre></details>
+        </div>
+      </article>
+
+      <article class="item" id="d-ai"><h3>AI request flow (coach conversation)</h3>
+        <div class="diagram">
+          <div class="flow">
+            <div class="flow-node"><span class="fn-title">User message</span></div>
+            <div class="flow-arrow"></div>
+            <div class="flow-node"><span class="fn-title">Auth check</span><span class="fn-sub">Supabase session</span></div>
+            <div class="flow-arrow"></div>
+            <div class="flow-node"><span class="fn-title">Rate limit check</span><span class="fn-sub">per-user daily cap</span></div>
+            <div class="flow-arrow"></div>
+            <div class="flow-node"><span class="fn-title">Assemble context</span><span class="fn-sub">profile facts + recent turns</span></div>
+            <div class="flow-arrow"></div>
+            <div class="flow-node accent"><span class="fn-title">Claude API</span></div>
+            <div class="flow-arrow"></div>
+            <div class="flow-node"><span class="fn-title">Log + store turn</span></div>
+            <div class="flow-arrow"></div>
+            <div class="flow-node"><span class="fn-title">Response to user</span></div>
+          </div>
+          <div class="diagram-caption">The context assembled for Claude is built server-side from confirmed profile fields — the model answers from what's actually stored, not from unfiltered chat memory.</div>
+          <details class="mermaid-src"><summary>Mermaid source</summary><pre>graph LR
+  Msg[User message] --> Auth[Auth check]
+  Auth --> Rate[Rate limit check]
+  Rate --> Context[Assemble context: profile + recent turns]
+  Context --> Claude[Claude API]
+  Claude --> Log[Log + store turn]
+  Log --> Response[Response to user]</pre></details>
+        </div>
+      </article>
+
+      <article class="item" id="d-job"><h3>Job ingestion flow</h3>
+        <div class="diagram">
+          <div class="flow">
+            <div class="flow-node"><span class="fn-title">Source</span><span class="fn-sub">user link · career-page feed</span></div>
+            <div class="flow-arrow"></div>
+            <div class="flow-node"><span class="fn-title">Normalize</span><span class="fn-sub">title, location, fields</span></div>
+            <div class="flow-arrow"></div>
+            <div class="flow-node"><span class="fn-title">Dedupe</span><span class="fn-sub">title+company+location hash</span></div>
+            <div class="flow-arrow"></div>
+            <div class="flow-node"><span class="fn-title">Store in jobs table</span></div>
+            <div class="flow-arrow"></div>
+            <div class="flow-node accent"><span class="fn-title">Claude</span><span class="fn-sub">score against profile</span></div>
+            <div class="flow-arrow"></div>
+            <div class="flow-node"><span class="fn-title">Shown to user</span><span class="fn-sub">with explanation</span></div>
+          </div>
+          <div class="diagram-caption">Scheduled by a Cloudflare Cron Trigger hitting whatever source is confirmed feasible in the Phase&nbsp;2 data-source research below — no dedicated queue/worker system for MVP volume.</div>
+          <details class="mermaid-src"><summary>Mermaid source</summary><pre>graph LR
+  Source --> Normalize
+  Normalize --> Dedupe
+  Dedupe --> Store[(jobs table)]
+  Store --> Score[Claude: score against profile]
+  Score --> Shown[Shown to user]</pre></details>
+        </div>
+      </article>
+
+      <article class="item" id="d-profile"><h3>Profile update flow</h3>
+        <div class="diagram">
+          <div class="flow">
+            <div class="flow-node"><span class="fn-title">Edit / interview answer</span></div>
+            <div class="flow-arrow"></div>
+            <div class="flow-node"><span class="fn-title">Validate</span></div>
+            <div class="flow-arrow"></div>
+            <div class="flow-node"><span class="fn-title">Set provenance</span><span class="fn-sub">User-Stated / Confirmed</span></div>
+            <div class="flow-arrow"></div>
+            <div class="flow-node accent"><span class="fn-title">DB write</span><span class="fn-sub">single transaction</span></div>
+            <div class="flow-arrow"></div>
+            <div class="flow-node"><span class="fn-title">Memory tier assigned</span><span class="fn-sub">Permanent / Preference / Sensitive</span></div>
+          </div>
+          <div class="diagram-caption">A failed step rolls the whole write back — a partial profile update never gets saved.</div>
+          <details class="mermaid-src"><summary>Mermaid source</summary><pre>graph LR
+  Edit --> Validate --> Provenance[Set provenance]
+  Provenance --> Write[(DB write, single transaction)]
+  Write --> Tier[Memory tier assigned]</pre></details>
+        </div>
+      </article>
+
+      <article class="item" id="d-security"><h3>Security boundary</h3>
+        <div class="diagram">
+          <div class="boundary-row">
+            <div class="boundary"><span class="b-label">Untrusted — client</span>
+              <div class="flow-node"><span class="fn-title">Browser</span></div>
+            </div>
+            <div class="boundary"><span class="b-label">Trusted — server (Cloudflare Workers)</span>
+              <div class="flow-node accent"><span class="fn-title">API routes</span></div>
+              <div class="flow-node accent"><span class="fn-title">Rate limiter</span></div>
+            </div>
+            <div class="boundary"><span class="b-label">Trusted — data (Supabase)</span>
+              <div class="flow-node"><span class="fn-title">Postgres + RLS</span></div>
+              <div class="flow-node"><span class="fn-title">Storage (private buckets)</span></div>
+            </div>
+            <div class="boundary"><span class="b-label">Third-party — external</span>
+              <div class="flow-node risk"><span class="fn-title">Claude API</span></div>
+              <div class="flow-node risk"><span class="fn-title">Resend</span></div>
+            </div>
+          </div>
+          <div class="diagram-caption">API keys and the Supabase service role live only on the server. Row Level Security means even a bug in a Cloudflare Worker function can't leak one user's data to another.</div>
+          <details class="mermaid-src"><summary>Mermaid source</summary><pre>graph LR
+  subgraph Client [Untrusted]
+    Browser
+  end
+  subgraph Server [Trusted - Cloudflare Workers]
+    API[API routes]
+    Rate[Rate limiter]
+  end
+  subgraph Data [Trusted - Supabase]
+    DB[(Postgres + RLS)]
+    Storage[Private storage]
+  end
+  subgraph External [Third-party]
+    Claude[Claude API]
+    Resend
+  end
+  Browser --> API --> Rate --> DB
+  API --> Claude
+  API --> Resend</pre></details>
+        </div>
+      </article>
+    </section>
+
+    <!-- DATA LAYER -->
+    <section class="part" id="s-schema">
+      <div class="part-eyebrow">Part C — Data Layer</div>
+      <h2 class="part-heading">Schema, API surface, background work</h2>
+
+      <article class="item"><h3>Draft database schema</h3>
+        <div class="table-wrap"><table>
+          <tr><th>Table</th><th>Key fields</th><th>Purpose</th></tr>
+          <tr><td><code>users</code></td><td>id, email, locale, created_at</td><td>Managed mostly by Supabase Auth</td></tr>
+          <tr><td><code>profile_fields</code></td><td>user_id, category, key, value, provenance, confidence, updated_at</td><td>Every profile fact as one row — the fact/inference model made concrete</td></tr>
+          <tr><td><code>employment_history</code></td><td>user_id, employer, title, start_date, end_date, description, provenance</td><td>Structured work history</td></tr>
+          <tr><td><code>education</code>, <code>certifications</code>, <code>skills</code></td><td>user_id, name/title, issuer, dates, provenance</td><td>Structured supporting profile data</td></tr>
+          <tr><td><code>documents</code></td><td>user_id, storage_path, type, uploaded_at, extraction_status</td><td>Uploaded files and their processing state</td></tr>
+          <tr><td><code>interview_sessions</code>, <code>interview_answers</code></td><td>user_id, question, answer, skipped, answered_at</td><td>Guided interview progress, resumable</td></tr>
+          <tr><td><code>conversations</code>, <code>messages</code></td><td>user_id, conversation_id, role, content, cited_facts, created_at</td><td>Coach chat history, with citations to profile facts</td></tr>
+          <tr><td><code>jobs</code></td><td>source, external_id, title, company, location, raw_data, normalized_at</td><td>Ingested/added job listings</td></tr>
+          <tr><td><code>job_matches</code></td><td>user_id, job_id, score, explanation, status (saved/dismissed/applied)</td><td>Per-user match results and actions</td></tr>
+          <tr><td><code>consent_log</code></td><td>user_id, category, granted, version, timestamp</td><td>Versioned consent history, never overwritten</td></tr>
+          <tr><td><code>audit_log</code></td><td>user_id, action, actor (user/system/ai), timestamp</td><td>Who changed what, including AI-driven writes</td></tr>
+        </table></div>
+        <p>Full DDL (column types, indexes, RLS policies) gets written at implementation time, not in this framework — this table is the shape, not the code.</p>
+      </article>
+
+      <article class="item" id="s-api"><h3>API endpoint plan</h3>
+        <div class="table-wrap"><table>
+          <tr><th>Area</th><th>Representative routes</th></tr>
+          <tr><td>Auth</td><td><code>POST /auth/signup</code>, <code>/auth/login</code>, <code>/auth/logout</code>, <code>/auth/verify</code></td></tr>
+          <tr><td>Profile</td><td><code>GET/PATCH /profile</code>, <code>GET /profile/fields</code>, <code>POST /profile/fields/:id/confirm</code></td></tr>
+          <tr><td>Documents</td><td><code>POST /documents/upload</code>, <code>GET /documents/:id/status</code></td></tr>
+          <tr><td>Interview</td><td><code>GET /interview/next</code>, <code>POST /interview/answer</code>, <code>POST /interview/skip</code></td></tr>
+          <tr><td>Coach</td><td><code>POST /coach/message</code>, <code>GET /coach/conversations/:id</code></td></tr>
+          <tr><td>Jobs</td><td><code>GET /jobs/matches</code>, <code>POST /jobs/:id/save</code>, <code>POST /jobs/:id/dismiss</code></td></tr>
+          <tr><td>Privacy</td><td><code>GET /privacy/export</code>, <code>DELETE /privacy/account</code>, <code>PATCH /privacy/consent</code></td></tr>
+        </table></div>
+      </article>
+
+      <article class="item" id="s-jobs"><h3>Background / scheduled jobs</h3>
+        <p>Kept deliberately minimal for MVP, all via Cloudflare Cron Triggers: <b>job-source sync</b> (pulls and normalizes new listings on a schedule), <b>preference re-confirmation reminder</b> (periodically prompts users to confirm salary/location/visa/availability haven't changed, per the Phase 1 memory model), <b>stale-listing cleanup</b> (marks expired postings). No dedicated queue service — cron-triggered functions are enough at pilot volume.</p>
+      </article>
+    </section>
+
+    <!-- RELIABILITY -->
+    <section class="part" id="s-errors">
+      <div class="part-eyebrow">Part D — Reliability</div>
+      <h2 class="part-heading">What happens when something breaks</h2>
+
+      <article class="item"><h3>Error handling strategy</h3>
+        <div class="table-wrap"><table>
+          <tr><th>Error type</th><th>User-facing behavior</th></tr>
+          <tr><td>Validation (bad input)</td><td>Inline field-level message, specific about what's wrong</td></tr>
+          <tr><td>Claude API error/timeout</td><td>Retry once with backoff, then "the coach is temporarily unavailable, try again" — never a silent failure or a fabricated response</td></tr>
+          <tr><td>Auth/session expired</td><td>Redirect to login, preserve in-progress form state where feasible</td></tr>
+          <tr><td>Upload/extraction failure</td><td>Explicit "couldn't read this file" with a manual-entry fallback offered immediately</td></tr>
+        </table></div>
+        <p>Multi-step writes (e.g. extraction → tagging → profile update) run inside a database transaction, so a failure partway through never leaves a half-updated profile.</p>
+      </article>
+
+      <article class="item" id="s-eval"><h3>AI evaluation plan</h3>
+        <p>Because the one hard rule is "never invent a fact," extraction quality needs a real check, not a vibe check: maintain a small fixed set of test CVs (varied formats, English and Arabic) with known-correct structured output, and run it against that set before shipping any prompt change. During the pilot, spot-check a sample of real (consented) extractions weekly. Track a simple signal over time: how often users correct the same field type — a rising correction rate on, say, "job title" is a direct prompt-quality alarm, not something you'd otherwise notice.</p>
+      </article>
+    </section>
+
+    <!-- ENVIRONMENTS -->
+    <section class="part" id="s-dev">
+      <div class="part-eyebrow">Part E — Environments</div>
+      <h2 class="part-heading">Dev, deploy, and backup</h2>
+
+      <article class="item"><h3>Development environment</h3>
+        <p>Local Next.js dev server against a separate <b>dev Supabase project</b> (not production data). A separate, low-spend Claude API key for development, distinct from the production key, so a bug in a test loop can't quietly run up production-scale cost.</p>
+      </article>
+
+      <article class="item" id="s-deploy"><h3>Deployment & backups</h3>
+        <p><b>Deployment:</b> GitHub is the source of truth — push to <code>main</code> deploys to production on Cloudflare Workers automatically via the Git integration; every other branch/PR gets its own preview URL, so a change can be checked before it's live. <b>Backups:</b> Supabase's free tier has limited backup retention — budgeting Supabase Pro (~$25/month) is recommended once real user data is involved, specifically for daily backups and point-in-time recovery, not for any feature reason.</p>
+      </article>
+    </section>
+
+    <!-- COST & RISK -->
+    <section class="part" id="s-cost">
+      <div class="part-eyebrow">Part F — Cost & Risk</div>
+      <h2 class="part-heading">What this actually costs to run, and what could go wrong</h2>
+
+      <article class="item"><h3>Estimated MVP infrastructure cost (monthly, 10–50 pilot users)</h3>
+        <div class="table-wrap"><table>
+          <tr><th>Service</th><th>Estimated cost</th><th>Note</th></tr>
+          <tr><td>Cloudflare Workers</td><td>$0–5</td><td>Free tier (100k requests/day) likely enough for pilot; Workers Paid ($5/mo, 10M requests) is cheap headroom if needed</td></tr>
+          <tr><td>Supabase</td><td>$0–25</td><td>Free tier works at pilot scale; Pro recommended once real user data needs proper backups</td></tr>
+          <tr><td>Resend</td><td>$0</td><td>Free tier covers low pilot email volume</td></tr>
+          <tr><td>Sentry</td><td>$0</td><td>Free tier covers small-scale error tracking</td></tr>
+          <tr><td>Domain (Cloudflare Registrar)</td><td>~$1/mo equiv.</td><td>At-cost annual registration, no markup — same account as hosting</td></tr>
+          <tr><td>Claude API</td><td>$50–300</td><td>Carried from Phase 1 — by far the largest and most variable line item</td></tr>
+        </table></div>
+        <div class="cost-total">Total estimate: roughly <b>$50–355/month</b> during the free pilot — almost entirely Claude API usage. Cloudflare's hosting tier is a little cheaper than the earlier Vercel estimate, and it's now one bill instead of two for hosting and domain.</div>
+      </article>
+
+      <article class="item" id="s-risk"><h3>Technical risks</h3>
+        <div class="table-wrap"><table>
+          <tr><th>Risk</th><th>Mitigation</th></tr>
+          <tr><td>CV extraction quality varies by format/language</td><td>Fixed test set run before every prompt change; low-confidence extractions fall back to prompting manual entry rather than guessing</td></tr>
+          <tr><td>Free-tier limits (Cloudflare/Supabase) hit unexpectedly mid-pilot</td><td>Check usage dashboards weekly during the pilot; upgrade proactively, not reactively</td></tr>
+          <tr><td>OpenNext-for-Cloudflare adapter hits an unsupported Node API</td><td>Surface this early: do a throwaway "hello world" deploy in week one, before real feature work, to catch adapter friction while it's cheap to fix</td></tr>
+          <tr><td>Arabic/RTL layout bugs surface late</td><td>Test core flows in Arabic locale before pilot launch, not after</td></tr>
+          <tr><td>Solo founder can't debug a production incident alone</td><td>Sentry alerts plus a short written runbook for the handful of failure modes above, so the fix is "follow the doc," not "figure it out live"</td></tr>
+        </table></div>
+      </article>
+    </section>
+
+    <footer class="doc-footer">
+      Phase 2 approved, amended to run on Cloudflare Workers. Next: Phase 3 (Information Architecture & UX Framework).
+    </footer>
+  </main>
+</div>

@@ -1,0 +1,280 @@
+<title>AI Job Coach — Phase 4 Visual Directions</title>
+<style>
+  :root{
+    --bg:#F6F5F2; --surface:#FFFFFF; --surface-2:#ECEAE4; --border:#DEDAD1;
+    --ink:#1A1815; --ink-soft:#5C5750; --ink-faint:#8C877E;
+    --accent:#B23A1F; --accent-soft:#F3E1D9;
+    --font-body:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+    --font-mono:ui-monospace,'Cascadia Code','SF Mono',Consolas,monospace;
+  }
+  @media (prefers-color-scheme:dark){
+    :root{ --bg:#141210; --surface:#1C1917; --surface-2:#252220; --border:#39342F; --ink:#F1EEE9; --ink-soft:#B8B2A9; --ink-faint:#847E74; --accent:#E8703F; --accent-soft:#3A2318; }
+  }
+  :root[data-theme="dark"]{ --bg:#141210; --surface:#1C1917; --surface-2:#252220; --border:#39342F; --ink:#F1EEE9; --ink-soft:#B8B2A9; --ink-faint:#847E74; --accent:#E8703F; --accent-soft:#3A2318; }
+  :root[data-theme="light"]{ --bg:#F6F5F2; --surface:#FFFFFF; --surface-2:#ECEAE4; --border:#DEDAD1; --ink:#1A1815; --ink-soft:#5C5750; --ink-faint:#8C877E; --accent:#B23A1F; --accent-soft:#F3E1D9; }
+
+  *{box-sizing:border-box;}
+  body{margin:0; background:var(--bg); color:var(--ink); font-family:var(--font-body); line-height:1.55; -webkit-font-smoothing:antialiased;}
+  main{max-width:1100px; margin:0 auto; padding:44px clamp(20px,4vw,64px) 100px;}
+  h1,h2,h3{text-wrap:balance; font-weight:600;}
+  .eyebrow{font-family:var(--font-mono); letter-spacing:.08em; text-transform:uppercase; color:var(--accent); font-size:12px; margin-bottom:10px;}
+  h1.title{font-size:clamp(26px,4vw,36px); margin:0 0 14px; line-height:1.15;}
+  .subtitle{color:var(--ink-soft); font-size:16.5px; max-width:70ch; margin:0 0 8px;}
+
+  .evidence{display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin:28px 0 40px;}
+  @media (max-width:800px){ .evidence{grid-template-columns:1fr;} }
+  .ev-card{border:1px solid var(--border); border-radius:10px; padding:16px 18px; background:var(--surface); font-size:13.5px;}
+  .ev-card .ev-name{font-weight:600; margin-bottom:6px; display:block;}
+  .ev-card .ev-url{color:var(--ink-faint); font-family:var(--font-mono); font-size:11px; display:block; margin-bottom:10px; word-break:break-all;}
+  .swatch-row{display:flex; gap:6px; margin-bottom:8px;}
+  .swatch{width:26px; height:26px; border-radius:5px; border:1px solid rgba(0,0,0,.08); flex-shrink:0;}
+  .ev-card p{margin:0; color:var(--ink-soft);}
+
+  section.direction{margin:56px 0; padding-top:40px; border-top:1px solid var(--border);}
+  section.direction:first-of-type{border-top:none;}
+  .dir-head{display:flex; justify-content:space-between; align-items:baseline; flex-wrap:wrap; gap:10px; margin-bottom:6px;}
+  .dir-head h2{font-size:24px; margin:0;}
+  .dir-letter{font-family:var(--font-mono); font-size:13px; color:var(--ink-faint);}
+  .dir-tagline{color:var(--ink-soft); font-size:15.5px; max-width:64ch; margin:0 0 24px;}
+
+  .pal-strip{display:flex; gap:0; border-radius:8px; overflow:hidden; margin:0 0 22px; height:52px; border:1px solid var(--border);}
+  .pal-strip div{flex:1; display:flex; align-items:flex-end; padding:6px 8px; font-family:var(--font-mono); font-size:10px;}
+
+  .compare-grid{display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:24px;}
+  @media (max-width:760px){ .compare-grid{grid-template-columns:1fr;} }
+  .info-card{background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:16px 18px; font-size:14px;}
+  .info-card .ic-label{font-family:var(--font-mono); text-transform:uppercase; font-size:10.5px; letter-spacing:.05em; color:var(--accent); margin-bottom:8px; display:block;}
+  .info-card ul{margin:0; padding-left:18px; color:var(--ink-soft);}
+  .info-card li{margin-bottom:4px;}
+
+  /* ===== Mockup panels — each self-contained with its own tokens ===== */
+  .mock{border-radius:14px; padding:24px; margin-bottom:26px; overflow:hidden; position:relative;}
+  .mock-header{display:flex; justify-content:space-between; align-items:center; margin-bottom:18px;}
+  .mock-wordmark{font-weight:700; font-size:15px; letter-spacing:-.01em;}
+  .mock-nav{display:flex; gap:16px; font-size:12px;}
+  .mock-grid{display:grid; grid-template-columns:1.1fr 1fr; gap:16px;}
+  @media (max-width:640px){ .mock-grid{grid-template-columns:1fr;} }
+  .mock-card{border-radius:10px; padding:16px 18px;}
+  .mock-stat-label{font-size:10.5px; text-transform:uppercase; letter-spacing:.06em; font-family:var(--font-mono); opacity:.7; margin-bottom:6px;}
+  .mock-stat-value{font-size:30px; font-weight:700; line-height:1;}
+  .mock-job-title{font-weight:700; font-size:15px; margin-bottom:2px;}
+  .mock-job-sub{font-size:12px; opacity:.65; margin-bottom:10px;}
+  .mock-chip{display:inline-flex; align-items:center; gap:5px; font-family:var(--font-mono); font-size:10.5px; padding:3px 9px; border-radius:20px; margin-bottom:10px;}
+  .mock-btn{display:inline-block; font-size:13px; font-weight:600; padding:9px 18px; border-radius:7px; margin-top:4px;}
+  .mock-chat{border-radius:10px; padding:14px 16px; font-size:13px; line-height:1.5; margin-top:12px;}
+  .mock-chat .who{font-family:var(--font-mono); font-size:10px; text-transform:uppercase; opacity:.6; margin-bottom:6px; display:block;}
+
+  /* Direction A — Quiet Confidence (light, ink-on-paper, minimal accent) */
+  .mock-a{background:#FBFAF7; border:1px solid #E4E0D6; color:#1A1815;}
+  .mock-a .mock-wordmark{font-family:Georgia,'Iowan Old Style',ui-serif,serif;}
+  .mock-a .mock-nav span{color:#6B665C;}
+  .mock-a .mock-card{background:#FFFFFF; border:1px solid #E4E0D6;}
+  .mock-a .mock-stat-value{color:#1A1815;}
+  .mock-a .mock-chip{background:#F3E1D9; color:#8A2E17;}
+  .mock-a .mock-btn{background:#B23A1F; color:#FFF9F5;}
+  .mock-a .mock-chat{background:#F3F1EA; color:#3A362F;}
+  .mock-a .mock-chat .who{color:#B23A1F;}
+
+  /* Direction B — Studio Dark (near-black, glowing accent) */
+  .mock-b{background:#111011; border:1px solid #2A2724; color:#EFEBE4;}
+  .mock-b .mock-wordmark{font-family:Georgia,'Iowan Old Style',ui-serif,serif; color:#FFF3EC;}
+  .mock-b .mock-nav span{color:#8C867B;}
+  .mock-b .mock-card{background:#1B1917; border:1px solid #322E2A;}
+  .mock-b .mock-stat-value{color:#FFF3EC; text-shadow:0 0 24px rgba(255,111,58,.35);}
+  .mock-b .mock-chip{background:rgba(255,111,58,.14); color:#FF8F5C;}
+  .mock-b .mock-btn{background:#FF6F3A; color:#160D08; box-shadow:0 0 26px rgba(255,111,58,.4);}
+  .mock-b .mock-chat{background:#1B1917; border:1px solid #322E2A; color:#C9C3B8;}
+  .mock-b .mock-chat .who{color:#FF8F5C;}
+
+  /* Direction C — Calibrated Warmth (light, warmer, softer accent) */
+  .mock-c{background:#FBF3EC; border:1px solid #EAD9C8; color:#2B211A;}
+  .mock-c .mock-wordmark{font-family:Georgia,'Iowan Old Style',ui-serif,serif;}
+  .mock-c .mock-nav span{color:#8A7A6A;}
+  .mock-c .mock-card{background:#FFFCF9; border:1px solid #EAD9C8;}
+  .mock-c .mock-stat-value{color:#2B211A;}
+  .mock-c .mock-chip{background:#F6E3D3; color:#9A5227;}
+  .mock-c .mock-btn{background:#D9714A; color:#FFF9F5;}
+  .mock-c .mock-chat{background:#F3E7DB; color:#4A3C30;}
+  .mock-c .mock-chat .who{color:#D9714A;}
+
+  .type-specimen{display:flex; gap:28px; flex-wrap:wrap; align-items:baseline; margin:0 0 22px; padding:18px 20px; background:var(--surface); border:1px solid var(--border); border-radius:8px;}
+  .type-specimen .spec-display{font-family:Georgia,'Iowan Old Style',ui-serif,serif; font-size:26px;}
+  .type-specimen .spec-body{font-family:var(--font-body); font-size:14.5px; color:var(--ink-soft); max-width:32ch;}
+  .type-specimen .spec-mono{font-family:var(--font-mono); font-size:12px; color:var(--accent);}
+
+  .rec-box{background:var(--accent-soft); border:1px solid color-mix(in srgb, var(--accent) 35%, transparent); border-radius:10px; padding:22px 26px; margin:44px 0; max-width:78ch;}
+  .rec-box .rec-label{font-family:var(--font-mono); text-transform:uppercase; letter-spacing:.06em; font-size:11px; color:var(--accent); margin-bottom:8px; display:block;}
+
+  .table-wrap{overflow-x:auto; margin:14px 0 30px; border:1px solid var(--border); border-radius:8px;}
+  table{border-collapse:collapse; width:100%; min-width:520px; font-size:14px; background:var(--surface);}
+  th,td{text-align:left; padding:10px 14px; border-bottom:1px solid var(--border); vertical-align:top;}
+  th{font-family:var(--font-mono); font-size:11px; text-transform:uppercase; letter-spacing:.05em; color:var(--ink-faint); background:var(--surface-2);}
+  tr:last-child td{border-bottom:none;}
+
+  footer{max-width:78ch; margin-top:50px; padding-top:22px; border-top:1px solid var(--border); color:var(--ink-faint); font-size:13.5px;}
+</style>
+
+<main>
+  <div class="eyebrow">Job Coach — Visual Direction</div>
+  <h1 class="title">Phase 4, Step 1: Three Visual Directions</h1>
+  <p class="subtitle">Grounded in the three references you sent. Before any component gets built, pick the direction that's right — everything downstream (buttons, forms, cards, the coach interface) gets designed once, in that direction, not three times.</p>
+
+  <div class="evidence">
+    <div class="ev-card">
+      <span class="ev-name">React Bits</span>
+      <span class="ev-url">reactbits.dev</span>
+      <div class="swatch-row">
+        <div class="swatch" style="background:#0A0A0A"></div>
+        <div class="swatch" style="background:#A855F7"></div>
+        <div class="swatch" style="background:#EDEDED"></div>
+      </div>
+      <p>Dark ground, animated shader/gradient backgrounds, vivid purple — motion <em>is</em> the product here. Read as: creative-developer, maximalist, playground energy.</p>
+    </div>
+    <div class="ev-card">
+      <span class="ev-name">Symbol Studio</span>
+      <span class="ev-url">symbolstudio.pl</span>
+      <div class="swatch-row">
+        <div class="swatch" style="background:#ECEDEF"></div>
+        <div class="swatch" style="background:#1B1D22"></div>
+        <div class="swatch" style="background:#FE552E"></div>
+      </div>
+      <p>Neutral paper/near-black grounds, one vivid orange-red accent, a custom geometric display face at large scale. Read as: premium branding studio, editorial, confident.</p>
+    </div>
+    <div class="ev-card">
+      <span class="ev-name">Vivid Motion</span>
+      <span class="ev-url">vividmotion.co</span>
+      <div class="swatch-row">
+        <div class="swatch" style="background:#0A0A0A"></div>
+        <div class="swatch" style="background:#E63A0F"></div>
+        <div class="swatch" style="background:#F1EEE8"></div>
+      </div>
+      <p>Near-black ground, vivid red-orange accent, editorial serif display + grotesque sans body + monospace for data labels. Read as: cinematic, premium, restrained-until-it-isn't.</p>
+    </div>
+  </div>
+
+  <p style="max-width:74ch; color:var(--ink-soft); margin:0 0 8px;">Two of three independently converge on a vivid orange-red accent against a neutral or near-black ground, paired with editorial serif display type. That's the DNA all three directions below share. What differs is how far each one leans into <em>dark</em> and <em>motion</em> — the two things that make sense on a portfolio site but need real judgment on a tool someone uses daily to manage something as stressful as a job search.</p>
+
+  <div class="type-specimen">
+    <span class="spec-display">Aa</span>
+    <span class="spec-body">Editorial serif for headlines and moments that need weight — profile milestones, the coach's key recommendations. Clean grotesque sans carries every UI surface and body of text. Monospace marks data: scores, dates, the Confirmed/Inferred citation tags that are core to how this product earns trust.</span>
+    <span class="spec-mono">92% match · Confirmed</span>
+  </div>
+
+  <!-- DIRECTION A -->
+  <section class="direction" id="dir-a">
+    <div class="dir-head"><h2>A — Quiet Confidence</h2><span class="dir-letter">light-first · minimal motion</span></div>
+    <p class="dir-tagline">Ink on paper. The accent shows up only where it matters — primary actions and trust citations — everywhere else stays calm. Closest to Symbol Studio's restraint.</p>
+    <div class="pal-strip">
+      <div style="background:#FBFAF7; color:#1A1815;">paper</div>
+      <div style="background:#1A1815; color:#FBFAF7;">ink</div>
+      <div style="background:#B23A1F; color:#FFF9F5;">accent</div>
+      <div style="background:#F3E1D9; color:#8A2E17;">accent-soft</div>
+    </div>
+    <div class="mock mock-a">
+      <div class="mock-header"><span class="mock-wordmark">Coach</span><div class="mock-nav"><span>Dashboard</span><span>Jobs</span><span>Coach</span><span>Settings</span></div></div>
+      <div class="mock-grid">
+        <div>
+          <div class="mock-card" style="margin-bottom:12px;"><div class="mock-stat-label">Profile completion</div><div class="mock-stat-value">72%</div></div>
+          <div class="mock-card">
+            <div class="mock-job-title">Digital Marketing Specialist</div>
+            <div class="mock-job-sub">Vantage Retail Group · Dubai · Hybrid</div>
+            <span class="mock-chip">● 88% match</span><br>
+            <a class="mock-btn" href="#">View match</a>
+          </div>
+        </div>
+        <div>
+          <div class="mock-chat"><span class="who">Coach</span>Based on your 8 years in marketing and the skills you confirmed, this role is a strong fit — missing only "SQL basics," which two of your saved jobs also ask for.</div>
+        </div>
+      </div>
+    </div>
+    <div class="compare-grid">
+      <div class="info-card"><span class="ic-label">Advantages</span><ul><li>Reads as serious and credible on first glance — matters for a career decision, not a purchase decision</li><li>Best long-session legibility for form-heavy work (CV review, profile correction)</li><li>Cheapest to get right in Arabic/RTL — light, high-contrast, minimal effects</li></ul></div>
+      <div class="info-card"><span class="ic-label">Trade-offs</span><ul><li>Least visually distinctive of the three — closest to "well-made SaaS product"</li><li>Risks reading a little conservative for the early-career persona (Ahmed)</li></ul></div>
+    </div>
+  </section>
+
+  <!-- DIRECTION B -->
+  <section class="direction" id="dir-b">
+    <div class="dir-head"><h2>B — Studio Dark</h2><span class="dir-letter">dark-first · glow accents</span></div>
+    <p class="dir-tagline">Near-black ground, the accent glows rather than sits flat. Closest to Vivid Motion's mood — premium and modern, with light atmosphere restrained to key moments only, not shader backgrounds throughout.</p>
+    <div class="pal-strip">
+      <div style="background:#111011; color:#EFEBE4;">near-black</div>
+      <div style="background:#EFEBE4; color:#111011;">bone</div>
+      <div style="background:#FF6F3A; color:#160D08;">accent</div>
+      <div style="background:#3A2318; color:#FF8F5C;">accent-soft</div>
+    </div>
+    <div class="mock mock-b">
+      <div class="mock-header"><span class="mock-wordmark">Coach</span><div class="mock-nav"><span>Dashboard</span><span>Jobs</span><span>Coach</span><span>Settings</span></div></div>
+      <div class="mock-grid">
+        <div>
+          <div class="mock-card" style="margin-bottom:12px;"><div class="mock-stat-label">Profile completion</div><div class="mock-stat-value">72%</div></div>
+          <div class="mock-card">
+            <div class="mock-job-title">Digital Marketing Specialist</div>
+            <div class="mock-job-sub">Vantage Retail Group · Dubai · Hybrid</div>
+            <span class="mock-chip">● 88% match</span><br>
+            <a class="mock-btn" href="#">View match</a>
+          </div>
+        </div>
+        <div>
+          <div class="mock-chat"><span class="who">Coach</span>Based on your 8 years in marketing and the skills you confirmed, this role is a strong fit — missing only "SQL basics," which two of your saved jobs also ask for.</div>
+        </div>
+      </div>
+    </div>
+    <div class="compare-grid">
+      <div class="info-card"><span class="ic-label">Advantages</span><ul><li>Most visually distinctive — feels like a premium, modern product, not generic SaaS</li><li>Glow treatment gives the coach's citations and scores real presence</li><li>Likely to land well with the tech-savvy early-career segment</li></ul></div>
+      <div class="info-card"><span class="ic-label">Trade-offs</span><ul><li>Dark mode fatigues faster on long, dense sessions (CV correction, multi-field forms) — needs a genuinely equal light mode, not an afterthought toggle</li><li>Slightly more contrast/testing overhead for WCAG AA and Arabic RTL</li><li>Risks reading a touch less "official" for users who associate dark UIs with entertainment/gaming rather than a career tool</li></ul></div>
+    </div>
+  </section>
+
+  <!-- DIRECTION C -->
+  <section class="direction" id="dir-c">
+    <div class="dir-head"><h2>C — Calibrated Warmth</h2><span class="dir-letter">light-first · one signature motion moment</span></div>
+    <p class="dir-tagline">The middle path. Warmer paper than A, a softer accent than B, and motion spent in exactly one place — the coach's "thinking" state — instead of spread thin or absent. Built for daily use by someone who's stressed, not for a portfolio scroll.</p>
+    <div class="pal-strip">
+      <div style="background:#FBF3EC; color:#2B211A;">warm paper</div>
+      <div style="background:#2B211A; color:#FBF3EC;">ink</div>
+      <div style="background:#D9714A; color:#FFF9F5;">accent</div>
+      <div style="background:#F6E3D3; color:#9A5227;">accent-soft</div>
+    </div>
+    <div class="mock mock-c">
+      <div class="mock-header"><span class="mock-wordmark">Coach</span><div class="mock-nav"><span>Dashboard</span><span>Jobs</span><span>Coach</span><span>Settings</span></div></div>
+      <div class="mock-grid">
+        <div>
+          <div class="mock-card" style="margin-bottom:12px;"><div class="mock-stat-label">Profile completion</div><div class="mock-stat-value">72%</div></div>
+          <div class="mock-card">
+            <div class="mock-job-title">Digital Marketing Specialist</div>
+            <div class="mock-job-sub">Vantage Retail Group · Dubai · Hybrid</div>
+            <span class="mock-chip">● 88% match</span><br>
+            <a class="mock-btn" href="#">View match</a>
+          </div>
+        </div>
+        <div>
+          <div class="mock-chat"><span class="who">Coach</span>Based on your 8 years in marketing and the skills you confirmed, this role is a strong fit — missing only "SQL basics," which two of your saved jobs also ask for.</div>
+        </div>
+      </div>
+    </div>
+    <div class="compare-grid">
+      <div class="info-card"><span class="ic-label">Advantages</span><ul><li>Most versatile across the full product: dense forms, long chat sessions, bilingual layouts all stay comfortable</li><li>Still visually distinctive vs. generic SaaS — warmer and more human than A, calmer than B</li><li>One deliberate motion moment (coach "thinking") reads as intelligent without asking users to sit through animation elsewhere</li></ul></div>
+      <div class="info-card"><span class="ic-label">Trade-offs</span><ul><li>Least "wow" on a first screenshot — it's built to hold up over week 12 of a job search, not week 1</li></ul></div>
+    </div>
+  </section>
+
+  <div class="rec-box">
+    <span class="rec-label">Recommendation</span>
+    <b>Direction C — Calibrated Warmth.</b> This product gets used repeatedly, often under real stress, by people reading dense information (CVs, job requirements, salary fields) in two languages. Direction B is the most striking of the three and worth strong consideration if you want the product to feel more "creative-tech, tech-savvy Ahmed" from the first screenshot — but it asks the most of accessibility and RTL testing, and dark-mode-first tools can read less "official" for a career decision. Direction A is the safest and cheapest to execute well, but risks blending into generic SaaS. C keeps the premium DNA your references share, spends its one motion moment where it earns trust (the coach thinking), and is built to still feel calm on a user's twentieth session, not just their first.
+  </div>
+
+  <section class="direction" id="next">
+    <div class="dir-head"><h2>Design-system approach, once you pick</h2></div>
+    <div class="table-wrap"><table>
+      <tr><th>Step</th><th>What happens</th></tr>
+      <tr><td>1. Direction locked</td><td>Full token set finalized: exact color scale (not just 4 swatches), type scale, spacing scale, radius/elevation rules — for both light and dark, whichever direction is chosen</td></tr>
+      <tr><td>2. Core components</td><td>Buttons, forms, cards, job cards, the citation chip (Confirmed/Inferred), navigation, modals — built once against the 10 screen specs from Phase 3</td></tr>
+      <tr><td>3. Coach-specific components</td><td>Chat bubble, thinking-state animation, citation inline pattern — these are the components that make the product feel "AI-integrated," not "AI as a bolted-on chat window"</td></tr>
+      <tr><td>4. States</td><td>Empty, loading, error, permission states styled per the patterns defined in Phase 3</td></tr>
+      <tr><td>5. RTL pass</td><td>Every component checked mirrored, not just the type</td></tr>
+    </table></div>
+  </section>
+
+  <footer>Pick a direction — A, B, C, or a specific mix (e.g. "C's palette with B's dark mode as an equal option") — and the full design system gets built against that choice, not all three.</footer>
+</main>
